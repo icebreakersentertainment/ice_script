@@ -1,0 +1,29 @@
+#ifndef PCH_STD_HPP_
+#define PCH_STD_HPP_
+
+#include <vector>
+#include <array>
+#include <list>
+#include <string>
+#include <memory>
+#include <typeindex>
+#include <unordered_map>
+#include <utility>
+#include <future>
+#include <mutex>
+#include <shared_mutex>
+#include <queue>
+#include <chrono>
+#include <sstream>
+#include <fstream>
+#include <ios>
+#include <iostream>
+#include <tuple>
+#include <functional>
+#include <algorithm>
+#include <cstdint>
+#include <cstring>
+#include <cstdio>
+#include <cmath>
+
+#endif //PCH_STD_HPP_
