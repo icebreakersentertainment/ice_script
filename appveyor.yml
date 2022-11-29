@@ -10,7 +10,7 @@ stack: python 3.9
 
 environment:
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: macOS
+#     - APPVEYOR_BUILD_WORKER_IMAGE: macOS
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
       CC: clang
@@ -30,7 +30,7 @@ build_script:
   - cd build
   - sh: conan profile new default --detect
   - sh: if [ "${APPVEYOR_BUILD_WORKER_IMAGE}" == "Ubuntu2004" ]; then conan profile update settings.compiler.libcxx=libstdc++11 default; fi
-  - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+  - conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
   - conan export ../conan/llvm-core llvm-core/13.0.0@icebreakersentertainment/stable
   - conan install .. --build missing
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="conan_paths.cmake" -DICSCRIPT_BUILD_BENCHMARKS=1 -DICSCRIPT_BUILD_TESTS=1 -DICSCRIPT_BUILD_AS_LIBRARY=1 ..
