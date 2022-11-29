@@ -3,14 +3,14 @@
 
 #include <string>
 
+#include "ast/AssignOperator.hpp"
 
 namespace ice_script { namespace asg {
 
 // ASSIGNOP      ::= '=' | '+=' | '-=' | '*=' | '/=' | '|=' | '&=' | '^=' | '%=' | '**=' | '<<=' | '>>=' | '>>>='
-
 struct Assignoperator
 {
-    std::string value;
+    ast::AssignOperator assignOperator;
 };
 
 }}

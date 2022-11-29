@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_ASSIGNVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_ASSIGNVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/ConditionGenerator.hpp"
+#include "generator/llvm/detail/generators/AssignoperatorGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        AssignVisitorResultType operator()(const asg::Condition& condition);
-    AssignVisitorResultType operator()(const asg::Assignoperator& assignoperator);
+    AssignVisitorResultType operator()(const asg::Condition& condition)
+    {
+        return process(*context_, *llvm_, condition);
+    }
+
+    AssignVisitorResultType operator()(const asg::Assignoperator& assignoperator)
+    {
+        return process(*context_, *llvm_, assignoperator);
+    }
+
 };
 
 }}}}

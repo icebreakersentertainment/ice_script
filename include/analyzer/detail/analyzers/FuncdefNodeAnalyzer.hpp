@@ -5,13 +5,13 @@
 
 #include "asg/Functiondefinition.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Functiondefinition process(logger::ILogger& logger, Context& context, const ast::FuncdefNode& node);
+asg::Functiondefinition process(Context& context, const ast::FuncdefNode& node);
 
 }}}
 

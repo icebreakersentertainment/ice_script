@@ -14,6 +14,8 @@
 #include "ast/LocationInfo.hpp"
 #include "ast/Visibility.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct TypeNode;
@@ -23,7 +25,9 @@ struct ExprNode;
 struct ArglistNode;
 
 using InitListOrExprOrArgListType = boost::variant<
+        monostate,
         boost::variant<
+                monostate,
                 boost::recursive_wrapper<InitlistNode>,
                 boost::recursive_wrapper<ExprNode>
         >,

@@ -1,29 +1,67 @@
 #include "analyzer/detail/analyzers/FunccallNodeAnalyzer.hpp"
 
+#include "analyzer/detail/analyzers/ArglistNodeAnalyzer.hpp"
+
+#include "analyzer/detail/SymbolKeyResolver.hpp"
+
 namespace ice_script { namespace analyzer { namespace detail {
 
 using namespace ice_script::ast;
 using namespace ice_script::asg;
 
-asg::Functioncall process(logger::ILogger& logger, Context& context, const ast::FunccallNode& node)
+asg::Functioncall process(Context& context, const ast::FunccallNode& node)
 {
-    LOG_DEBUG((&logger), "Analyzing %s", typeid(node).name())
+    LOG_DEBUG((&context.logger()), "Analyzing %s", typeid(node).name())
 
     Scope& scope = context.scope();
 
     Functioncall functioncall{};
 
-    const auto functionName = toName(node.identifierNode.get().value);
+    functioncall.name = node.identifierNode.get().value;
+    
+    const auto candidates = context.symbolTable().findFunction(functioncall.name);
+    
+    bool success = false;
+    
+    for (const auto& candidate : candidates)
+    {
+        if (candidate->parameters().size() != node.arglistNode.get().value.size()) continue;
+        
+        scope.pushExpectedTypes(candidate->type()->parameters().getAll());
 
-    functioncall.name = functionName;
+        try
+        {
+            functioncall.symbol = candidate;
+            functioncall.type = candidate->type();
+            
+            functioncall.arglist = process(context, node.arglistNode.get());
+            
+            success = true;
+        }
+        catch (const std::exception& e)
+        {
+            
+        }
 
-    std::shared_ptr<FunctionSymbol> symbol = scope.symbolTable().findFunction(functionName);
+        scope.popExpectedTypes();
+        
+        if (success) break;
+    }
+    
+    if (!success) throw RuntimeException("");
+    
+    // const auto symbolKey = resolveSymbolKey(context, node);
 
-    functioncall.type = symbol->type();
+    // auto symbol = scope.symbolTable().getFunctionByKey(symbolKey);
 
+    // functioncall.symbol = symbol;
+    // functioncall.type = symbol->type();
 
+    // scope.pushExpectedTypes(symbol->type()->parameters());
 
-//    expression.expressionterm = boost::get<Expressionterm>(operator()(node.exprtermNode));
+    // functioncall.arglist = process(context, node.arglistNode.get());
+
+    // scope.popExpectedTypes();
 
     return functioncall;
 }

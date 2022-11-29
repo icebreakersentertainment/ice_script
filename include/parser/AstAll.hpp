@@ -15,6 +15,8 @@
 #include "ast/LocationInfo.hpp"
 #include "ast/BitsNode.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct ClassNode : LocationInfo
@@ -262,6 +264,7 @@ struct ExprvalueNode: LocationInfo
 {
     // (string("void") | constructcallRule | funccallRule | varaccessRule | castRule | literalRule | (lit("(") >> assignRule >> lit(")")) | lambdaRule);
     boost::variant<
+            monostate,
             std::string,
             boost::recursive_wrapper<ConstructcallNode>,
             boost::recursive_wrapper<FunccallNode>,
@@ -302,7 +305,8 @@ struct ExprpostopNode: LocationInfo
     // | string("++")
     // | string("--");
     boost::variant<
-            boost::variant<boost::recursive_wrapper<FunccallNode>, boost::recursive_wrapper<IdentifierNode>>,
+            monostate,
+            boost::variant<monostate, boost::recursive_wrapper<FunccallNode>, boost::recursive_wrapper<IdentifierNode>>,
             boost::tuple<
                     boost::optional<boost::recursive_wrapper<IdentifierNode>>,
                     boost::recursive_wrapper<AssignNode>,
@@ -494,7 +498,7 @@ struct LogicopNode: LocationInfo
 struct ExpropNode: LocationInfo
 {
 //    EXPROP        ::= MATHOP | COMPOP | LOGICOP | BITOP
-    boost::variant<BitopNode, MathopNode, CompopNode, LogicopNode> value;
+    boost::variant<monostate, BitopNode, MathopNode, CompopNode, LogicopNode> value;
 //    std::string value;
 };
 
@@ -514,7 +518,7 @@ struct NumberNode;
 struct LiteralNode: LocationInfo
 {
     // literalRule = qi::eps >> (numberRule | stringRule | bitsRule | string("true") | string("false") | string("null"));
-    boost::variant<boost::recursive_wrapper<NumberNode>, StringNode, boost::recursive_wrapper<ast::BitsNode>, std::string> value;
+    boost::variant<monostate, boost::recursive_wrapper<NumberNode>, StringNode, boost::recursive_wrapper<ast::BitsNode>, std::string> value;
 //    std::string value;
 };
 
@@ -527,6 +531,7 @@ struct DatatypeNode: LocationInfo
 {
     // DATATYPE      ::= (IDENTIFIER | PRIMTYPE | '?' | 'auto')
     boost::variant<
+            monostate,
             IdentifierNode,
             PrimtypeNode,
             std::string

@@ -12,6 +12,8 @@
 
 #include "ast/LocationInfo.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct IfNode;
@@ -30,7 +32,7 @@ struct StatementNode : LocationInfo
 {
     boost::variant<
             // This is here to allow the variant to be default constructed without running into recursion issues
-            boost::spirit::qi::unused_type,
+            monostate,
             boost::recursive_wrapper<IfNode>,
             boost::recursive_wrapper<ForNode>,
             boost::recursive_wrapper<WhileNode>,

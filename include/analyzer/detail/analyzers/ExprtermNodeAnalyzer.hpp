@@ -5,13 +5,13 @@
 
 #include "asg/Expressionterm.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Expressionterm process(logger::ILogger& logger, Context& context, const ast::ExprtermNode& node);
+asg::Expressionterm process(Context& context, const ast::ExprtermNode& node);
 
 }}}
 

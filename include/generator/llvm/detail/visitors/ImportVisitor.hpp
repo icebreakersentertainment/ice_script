@@ -1,11 +1,15 @@
 #ifndef ICE_SCRIPT_GENERATOR_IMPORTVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_IMPORTVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/TypeGenerator.hpp"
+#include "generator/llvm/detail/generators/IdentifierGenerator.hpp"
+#include "generator/llvm/detail/generators/ParameterlistGenerator.hpp"
+#include "generator/llvm/detail/generators/FunctionattributeGenerator.hpp"
+#include "generator/llvm/detail/generators/StringGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,11 +26,31 @@ public:
 
     using AbstractVisitor::operator();
 
-        ImportVisitorResultType operator()(const asg::Type& type);
-    ImportVisitorResultType operator()(const asg::Identifier& identifier);
-    ImportVisitorResultType operator()(const asg::Parameterlist& parameterlist);
-    ImportVisitorResultType operator()(const asg::Functionattribute& functionattribute);
-    ImportVisitorResultType operator()(const asg::String& string);
+    ImportVisitorResultType operator()(const Type& type)
+    {
+        return process(*context_, *llvm_, type);
+    }
+
+    ImportVisitorResultType operator()(const asg::Identifier& identifier)
+    {
+        return process(*context_, *llvm_, identifier);
+    }
+
+    ImportVisitorResultType operator()(const asg::Parameterlist& parameterlist)
+    {
+        return process(*context_, *llvm_, parameterlist);
+    }
+
+    ImportVisitorResultType operator()(const asg::Functionattribute& functionattribute)
+    {
+        return process(*context_, *llvm_, functionattribute);
+    }
+
+    ImportVisitorResultType operator()(const asg::String& string)
+    {
+        return process(*context_, *llvm_, string);
+    }
+
 };
 
 }}}}

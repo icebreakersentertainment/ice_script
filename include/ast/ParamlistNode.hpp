@@ -26,12 +26,13 @@ struct TypemodNode;
 struct IdentifierNode;
 struct ExprNode;
 
-using TypeTypeModIdentifierExprType = boost::tuple<
-        boost::recursive_wrapper<TypeNode>,
-        boost::recursive_wrapper<TypemodNode>,
-        boost::optional<boost::recursive_wrapper<IdentifierNode>>,
-        boost::optional<boost::recursive_wrapper<ExprNode>>
->;
+struct TypeTypeModIdentifierExpr
+{
+    boost::recursive_wrapper<TypeNode> typeNode;
+//     boost::recursive_wrapper<TypemodNode> typemodNode;
+    boost::optional<boost::recursive_wrapper<IdentifierNode>> optionalIdentifierNode;
+    boost::optional<boost::recursive_wrapper<ExprNode>> optionalExprNode;
+};
 
 //// TODO
 //using ParamlistVariantType = boost::optional<
@@ -48,16 +49,16 @@ using TypeTypeModIdentifierExprType = boost::tuple<
 //>;
 // TODO
 using ParamlistVariantType = boost::tuple<
-        TypeTypeModIdentifierExprType,
+        TypeTypeModIdentifierExpr,
         std::vector<
-                TypeTypeModIdentifierExprType
+                TypeTypeModIdentifierExpr
         >
 >;
 
 struct ParamlistNode : LocationInfo
 {
 //    boost::optional<ParamlistVariantType> value;
-    std::vector<TypeTypeModIdentifierExprType> value;
+    std::vector<TypeTypeModIdentifierExpr> value;
 //    boost::optional<
 //            boost::variant<
 //                    std::string,
@@ -82,6 +83,14 @@ struct ParamlistNode : LocationInfo
 #include "ast/TypemodNode.hpp"
 #include "ast/IdentifierNode.hpp"
 #include "ast/ExprNode.hpp"
+
+BOOST_FUSION_ADAPT_STRUCT(
+        ice_script::ast::TypeTypeModIdentifierExpr,
+        typeNode,
+        // typemodNode,
+        optionalIdentifierNode,
+        optionalExprNode
+)
 
 BOOST_FUSION_ADAPT_STRUCT(
         ice_script::ast::ParamlistNode,

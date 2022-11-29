@@ -3,11 +3,10 @@
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-// VAR           ::= ['private'|'protected'] TYPE IDENTIFIER [( '=' (INITLIST | EXPR)) | ARGLIST] {',' IDENTIFIER [( '=' (INITLIST | EXPR)) | ARGLIST]} ';'
-// TYPE          ::= ['const'] SCOPE DATATYPE ['<' TYPE {',' TYPE} '>'] { ('[' ']') | ('@' ['const']) }
-// SCOPE         ::= ['::'] {IDENTIFIER '::'} [IDENTIFIER ['<' TYPE {',' TYPE} '>'] '::']
-// DATATYPE      ::= (IDENTIFIER | PRIMTYPE | '?' | 'auto')
-std::shared_ptr<asg::Type> resolve(logger::ILogger& logger, Context& context, const ast::TypeNode& node)
+using namespace ice_script::ast;
+using namespace ice_script::asg;
+
+std::shared_ptr<Type> resolve(Context& context, const ast::TypeNode& node)
 {
     Scope& scope = context.scope();
 
@@ -20,31 +19,21 @@ std::shared_ptr<asg::Type> resolve(logger::ILogger& logger, Context& context, co
         const auto& identifierNode = boost::get<ast::IdentifierNode>(datatypeNode.value);
         const auto className = toName(identifierNode.value);
 
-        std::shared_ptr<asg::Type> type = context.typeTable().find(className);
+        auto types = context.typeTable().find(className);
 
-        if (!type) type = context.typeTable().unknownType();
-
-        return type;
-
-//        return context_->typeTable().get(className);
+        return types.empty() ? context.typeTable().unknownType() : types[0];
     }
     else if (datatypeNode.value.type() == typeid(ast::PrimtypeNode))
     {
         const auto& primtypeNode = boost::get<ast::PrimtypeNode>(datatypeNode.value);
 
         return context.typeTable().get(primtypeNode.primitiveType);
-
-//        return context_->typeTable().get(primtypeNode.primitiveType);
     }
 
     throw TypeNotFoundException();
 }
 
-// VAR           ::= ['private'|'protected'] TYPE IDENTIFIER [( '=' (INITLIST | EXPR)) | ARGLIST] {',' IDENTIFIER [( '=' (INITLIST | EXPR)) | ARGLIST]} ';'
-// TYPE          ::= ['const'] SCOPE DATATYPE ['<' TYPE {',' TYPE} '>'] { ('[' ']') | ('@' ['const']) }
-// SCOPE         ::= ['::'] {IDENTIFIER '::'} [IDENTIFIER ['<' TYPE {',' TYPE} '>'] '::']
-// DATATYPE      ::= (IDENTIFIER | PRIMTYPE | '?' | 'auto')
-std::shared_ptr<asg::FunctionType> resolveFunctionType(logger::ILogger& logger, Context& context, const ast::TypeNode& node)
+std::shared_ptr<FunctionType> resolveFunctionType(Context& context, const ast::TypeNode& node)
 {
     const auto& datatypeNode = node.datatypeNode;
 
@@ -59,29 +48,80 @@ std::shared_ptr<asg::FunctionType> resolveFunctionType(logger::ILogger& logger, 
         const auto& identifierNode = boost::get<ast::IdentifierNode>(datatypeNode.value);
         const auto className = toName(identifierNode.value);
 
-        std::shared_ptr<asg::FunctionType> type = context.typeTable().findFunction(className);
+        auto types = context.typeTable().findFunction(className);
 
 //        if (!type) type = context.typeTable().unknownType();
 
-        return type;
-
-//        return context_->typeTable().get(className);
+        return types[0];
     }
 
     throw TypeNotFoundException();
 }
 
-std::shared_ptr<asg::Type> resolveType(logger::ILogger& logger, Context& context, const asg::Expressionvalue& expressionvalue)
+std::shared_ptr<Type> resolveType(Context& context, const asg::Assign& assign)
 {
-    TypeResolverVisitor visitor{logger, context};
-    return boost::apply_visitor(visitor, expressionvalue.value);
+    if (!assign.functioncall)
+    {
+        return resolveType(context, assign.condition.get());
+    }
+    else
+    {
+        return assign.functioncall.get().get().type->returnType();
+    }
 }
 
-std::shared_ptr<asg::Type> resolveType(logger::ILogger& logger, Context& context, const asg::Expressionpostoperator& expressionpostoperator)
+std::shared_ptr<Type> resolveType(Context& context, const asg::Condition& condition)
 {
-    TypeResolverVisitor visitor{logger, context};
-    return boost::apply_visitor(visitor, expressionpostoperator.value);
-//    return {};
+    return resolveType(context, condition.expression.get());
+}
+
+std::shared_ptr<Type> resolveType(Context& context, const asg::Expression& expression)
+{
+    if (!expression.functioncall)
+    {
+        return resolveType(context, expression.expressionterm.get());
+    }
+    else
+    {
+        return expression.functioncall.get().get().type->returnType();
+    }
+}
+
+std::shared_ptr<Type> resolveType(Context& context, const asg::Expressionterm& expressionterm)
+{
+    const auto& exprpreopsExprvalueExprpostops = boost::get<ExprpreopsExprvalueExprpostops>(expressionterm.value);
+    const auto& expressionvalue = exprpreopsExprvalueExprpostops.expressionValue;
+    
+    if (!exprpreopsExprvalueExprpostops.expressionPostoperators.empty())
+    {
+        const auto& expressionpostoperator = exprpreopsExprvalueExprpostops.expressionPostoperators.back().get();
+        
+        return resolveType(context, expressionpostoperator);
+    }
+
+    return resolveType(context, expressionvalue);
+}
+
+std::shared_ptr<Type> resolveType(Context& context, const asg::Expressionvalue& expressionvalue)
+{
+    return boost::apply_visitor(TypeResolverVisitor(context), expressionvalue.value);
+}
+
+std::shared_ptr<Type> resolveType(Context& context, const asg::Expressionpostoperator& expressionpostoperator)
+{
+    return boost::apply_visitor(TypeResolverVisitor(context), expressionpostoperator.value);
+}
+
+std::shared_ptr<Type> resolveType(Context& context, const asg::ExprpreopsExprvalueExprpostops& exprpreopsExprvalueExprpostops)
+{
+    if (!exprpreopsExprvalueExprpostops.expressionPostoperators.empty())
+    {
+        return resolveType(context, exprpreopsExprvalueExprpostops.expressionPostoperators.back().get());
+    }
+    else
+    {
+        return resolveType(context, exprpreopsExprvalueExprpostops.expressionValue);
+    }
 }
 
 }}}

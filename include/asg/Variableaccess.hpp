@@ -5,14 +5,23 @@
 
 #include "asg/Scoperatore.hpp"
 #include "asg/Identifier.hpp"
+#include "asg/LocationInfo.hpp"
+
+#include "symbol/Symbol.hpp"
 
 namespace ice_script { namespace asg {
 
 // VARACCESS     ::= SCOPE IDENTIFIER
-struct Variableaccess
+struct Variableaccess : LocationInfo
 {
+    Variableaccess() = default;
+    
+    Variableaccess(std::shared_ptr<Symbol> symbol, std::shared_ptr<Type> type) : symbol(std::move(symbol)), type(std::move(type))
+    {}
+    
+    std::shared_ptr<Symbol> symbol;
+    std::shared_ptr<Type> type;
     Scoperatore scope;
-    std::string name;
 };
 
 }}

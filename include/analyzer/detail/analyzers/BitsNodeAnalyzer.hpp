@@ -5,13 +5,13 @@
 
 #include "asg/Bits.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Bits process(logger::ILogger& logger, Context& context, const ast::BitsNode& node);
+asg::Bits process(Context& context, const ast::BitsNode& node);
 
 }}}
 

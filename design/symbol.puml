@@ -1,0 +1,46 @@
+@startuml
+'scale 200 width
+'scale 500 height
+'left to right direction
+
+set namespaceSeparator ::
+
+class Symbol
+{
+    + const std::string& name() const
+    + void setName(std::string name)
+    + const std::shared_ptr<Type>& type() const
+    + void setType(Type& type)
+}
+
+class InterfaceSymbol extends Symbol
+class ClassSymbol extends Symbol
+{
+    - std::shared_ptr<ClassSymbol> extends_
+    - std::vector<std::shared_ptr<InterfaceSymbol>> implements_
+    - std::vector<std::shared_ptr<Symbol>> memberVariables_
+    - std::vector<std::shared_ptr<FunctionSymbol>> methods_
+}
+
+class PrimitiveSymbol extends Symbol
+class ArraySymbol extends Symbol
+
+class FunctionSymbol extends Symbol
+{
+    - std::vector<std::shared_ptr<Symbol>> parameters_
+    - std::shared_ptr<Symbol> returnSymbol_
+}
+
+class LambdaSymbol extends Symbol
+class VoidSymbol extends Symbol
+class NullSymbol extends Symbol
+class UnknownSymbol extends Symbol
+
+class SymbolTable
+{
+    + Symbol* find(const std::string& name)
+    + Symbol& get(const std::string& name)
+    + Symbol& create(const std::string& name)
+}
+
+@enduml

@@ -13,6 +13,8 @@
 
 #include "ast/LocationInfo.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct InitlistNode;
@@ -22,6 +24,7 @@ struct InitlistNode : LocationInfo
 {
     std::vector<
             boost::variant<
+                    monostate,
                     boost::recursive_wrapper<AssignNode>,
                     boost::recursive_wrapper<InitlistNode>
             >

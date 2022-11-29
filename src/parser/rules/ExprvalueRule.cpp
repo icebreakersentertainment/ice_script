@@ -22,9 +22,10 @@ using ascii::char_;
 using ascii::space;
 using ascii::space_type;
 
-ConstructcallRuleType _constructcallRule = constructcallRule.alias();
+//ConstructcallRuleType _constructcallRule = constructcallRule.alias();
+FunccallRuleType _funccallRule = funccallRule.alias();
 
 // EXPRVALUE     ::= 'void' | CONSTRUCTCALL | FUNCCALL | VARACCESS | CAST | LITERAL | '(' ASSIGN ')' | LAMBDA
-ExprvalueRuleType exprvalueRule = qi::eps >> (voidRule.alias() | _constructcallRule | funccallRule.alias() | varaccessRule.alias() | castRule.alias() | literalRule.alias() | (lit("(") >> assignRule.alias() >> lit(")")) | lambdaRule.alias());
+ExprvalueRuleType exprvalueRule = qi::eps >> (voidRule.alias() | _funccallRule | constructcallRule.alias() | varaccessRule.alias() | castRule.alias() | literalRule.alias() | (lit("(") >> assignRule.alias() >> lit(")")) | lambdaRule.alias());
 
 }}}

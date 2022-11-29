@@ -1,12 +1,16 @@
 #ifndef ICE_SCRIPT_ANALYZER_VARNODEVISITOR_HPP
 #define ICE_SCRIPT_ANALYZER_VARNODEVISITOR_HPP
 
-#include <string>
-
 #include "ast/Ast.hpp"
 #include "asg/Asg.hpp"
 
 #include "analyzer/detail/visitors/AbstractVisitor.hpp"
+
+#include "analyzer/detail/analyzers/TypeNodeAnalyzer.hpp"
+#include "analyzer/detail/analyzers/IdentifierNodeAnalyzer.hpp"
+#include "analyzer/detail/analyzers/InitlistNodeAnalyzer.hpp"
+#include "analyzer/detail/analyzers/ExprNodeAnalyzer.hpp"
+#include "analyzer/detail/analyzers/ArglistNodeAnalyzer.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -25,9 +29,20 @@ public:
 
     using AbstractVisitor::operator();
 
-    VarNodeVisitorResultType operator()(const ast::InitlistNode& node);
-    VarNodeVisitorResultType operator()(const ast::ExprNode& node);
-    VarNodeVisitorResultType operator()(const ast::ArglistNode& node);
+    VarNodeVisitorResultType operator()(const ast::InitlistNode& node)
+    {
+        return process(*context_, node);
+    }
+
+    VarNodeVisitorResultType operator()(const ast::ExprNode& node)
+    {
+        return process(*context_, node);
+    }
+
+    VarNodeVisitorResultType operator()(const ast::ArglistNode& node)
+    {
+        return process(*context_, node);
+    }
 };
 
 }}}

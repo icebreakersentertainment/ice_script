@@ -19,7 +19,7 @@ template <typename VisitorType, typename ResultType>
 class AbstractVisitor : public boost::static_visitor<ResultType>
 {
 public:
-    AbstractVisitor(logger::ILogger& logger, Context& context, Llvm& llvm) : logger_(&logger), context_(&context), llvm_(&llvm)
+    AbstractVisitor(Context& context, Llvm& llvm) : context_(&context), llvm_(&llvm)
     {
 
     }
@@ -36,7 +36,7 @@ public:
     >
     ResultType operator()(const T& unusedType)
     {
-        LOG_DEBUG(logger_, "wtf %s", typeid(unusedType).name())
+        LOG_DEBUG((&context_->logger()), "wtf %s", typeid(unusedType).name())
 
         return {};
     }
@@ -63,7 +63,7 @@ public:
     >
     ResultType operator()(const boost::recursive_wrapper<U>& node)
     {
-        LOG_DEBUG(logger_, "agh 2 %s", typeid(node).name())
+        LOG_DEBUG((&context_->logger()), "agh 2 %s", typeid(node).name())
         return operator()(node.get());
     }
 
@@ -88,7 +88,6 @@ public:
     }
 
 protected:
-    logger::ILogger* logger_;
     Context* context_;
     Llvm* llvm_;
 };

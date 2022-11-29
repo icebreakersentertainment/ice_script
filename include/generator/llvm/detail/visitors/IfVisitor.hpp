@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_IFVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_IFVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/AssignGenerator.hpp"
+#include "generator/llvm/detail/generators/StatementGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        IfVisitorResultType operator()(const asg::Assign& assign);
-    IfVisitorResultType operator()(const asg::Statement& statement);
+    IfVisitorResultType operator()(const asg::Assign& assign)
+    {
+        return process(*context_, *llvm_, assign);
+    }
+
+    IfVisitorResultType operator()(const asg::Statement& statement)
+    {
+        return process(*context_, *llvm_, statement);
+    }
+
 };
 
 }}}}

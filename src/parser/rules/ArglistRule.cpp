@@ -19,7 +19,8 @@ using ascii::space_type;
 // ARGLIST       ::= '(' [IDENTIFIER ':'] ASSIGN {',' [IDENTIFIER ':'] ASSIGN} ')'
 //    arglistRule = qi::eps >> lit("(") >> -(identifierRule.alias() >> string(":")) >> assignRule.alias() >> *(lit(",") >> -(identifierRule.alias() >> string(":")) >> assignRule.alias()) >> lit(")");
 ArglistRuleType arglistRule = qi::eps >> lit("(")
-            >> -(-(identifierRule.alias() >> string(":")) >> assignRule.alias()) % ','
+            >> as<ast::ArglistArgumentsType>()[-((-(identifierRule.alias() >> lit(":")) >> assignRule.alias()) % ',')]
+//            >> -(-(identifierRule.alias() >> string(":")) >> assignRule.alias()) % ','
             >> lit(")");
 
 }}}

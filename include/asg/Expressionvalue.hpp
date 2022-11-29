@@ -4,6 +4,9 @@
 #include <string>
 
 #include "ast/Void.hpp"
+#include "asg/LocationInfo.hpp"
+
+#include "detail/monostate.hpp"
 
 namespace ice_script { namespace asg {
 
@@ -15,19 +18,28 @@ struct Literal;
 struct Assign;
 struct Lambda;
 
+using ExpressionValueType = boost::variant<
+        monostate,
+        ast::Void,
+        boost::recursive_wrapper<Constructcall>,
+        boost::recursive_wrapper<Functioncall>,
+        boost::recursive_wrapper<Variableaccess>,
+        boost::recursive_wrapper<Cast>,
+        boost::recursive_wrapper<Literal>,
+        boost::recursive_wrapper<Assign>,
+        boost::recursive_wrapper<Lambda>
+>;
+
 // EXPRVALUE     ::= 'void' | CONSTRUCTCALL | FUNCCALL | VARACCESS | CAST | LITERAL | '(' ASSIGN ')' | LAMBDA
-struct Expressionvalue
+struct Expressionvalue : LocationInfo
 {
-    boost::variant<
-            ast::Void,
-            boost::recursive_wrapper<Constructcall>,
-            boost::recursive_wrapper<Functioncall>,
-            boost::recursive_wrapper<Variableaccess>,
-            boost::recursive_wrapper<Cast>,
-            boost::recursive_wrapper<Literal>,
-            boost::recursive_wrapper<Assign>,
-            boost::recursive_wrapper<Lambda>
-    > value;
+    Expressionvalue() = default;
+    
+    Expressionvalue(ExpressionValueType value) : value(std::move(value))
+    {}
+    
+    
+    ExpressionValueType value;
 };
 
 }}

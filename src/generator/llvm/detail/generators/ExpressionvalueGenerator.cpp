@@ -8,16 +8,14 @@ namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
 using namespace ice_script::asg;
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Expressionvalue& expressionvalue)
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::Expressionvalue& expressionvalue)
 {
-    LOG_DEBUG((&logger), "Processing %s", typeid(expressionvalue).name())
+    LOG_DEBUG((&context.logger()), "Processing %s", typeid(expressionvalue).name())
 
     Scope& scope = context.scope();
 
-    ExpressionvalueVisitor visitor{logger, context, llvm};
+    ExpressionvalueVisitor visitor{context, llvm};
     return boost::get<::llvm::Value*>(boost::apply_visitor(visitor, expressionvalue.value));
-
-//    return nullptr;
 }
 
 }}}}

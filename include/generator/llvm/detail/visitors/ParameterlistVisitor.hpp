@@ -1,11 +1,14 @@
 #ifndef ICE_SCRIPT_GENERATOR_PARAMETERLISTVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_PARAMETERLISTVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/TypeGenerator.hpp"
+#include "generator/llvm/detail/generators/TypemodifierGenerator.hpp"
+#include "generator/llvm/detail/generators/IdentifierGenerator.hpp"
+#include "generator/llvm/detail/generators/ExpressionGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,10 +25,26 @@ public:
 
     using AbstractVisitor::operator();
 
-        ParameterlistVisitorResultType operator()(const asg::Type& type);
-    ParameterlistVisitorResultType operator()(const asg::Typemodifier& typemodifier);
-    ParameterlistVisitorResultType operator()(const asg::Identifier& identifier);
-    ParameterlistVisitorResultType operator()(const asg::Expression& expression);
+    ParameterlistVisitorResultType operator()(const Type& type)
+    {
+        return process(*context_, *llvm_, type);
+    }
+
+    ParameterlistVisitorResultType operator()(const asg::Typemodifier& typemodifier)
+    {
+        return process(*context_, *llvm_, typemodifier);
+    }
+
+    ParameterlistVisitorResultType operator()(const asg::Identifier& identifier)
+    {
+        return process(*context_, *llvm_, identifier);
+    }
+
+    ParameterlistVisitorResultType operator()(const asg::Expression& expression)
+    {
+        return process(*context_, *llvm_, expression);
+    }
+
 };
 
 }}}}

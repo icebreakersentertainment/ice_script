@@ -13,6 +13,8 @@
 
 #include "ast/LocationInfo.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct TypeNode;
@@ -31,7 +33,7 @@ struct VirtpropNode : LocationInfo
                     std::string,
                     boost::optional<std::string>,
                     boost::recursive_wrapper<FuncattrNode>,
-                    boost::variant<boost::recursive_wrapper<StatblockNode>, std::string>
+                    boost::variant<monostate, boost::recursive_wrapper<StatblockNode>, std::string>
             >
     > stuff;
 

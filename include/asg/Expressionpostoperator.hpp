@@ -5,25 +5,36 @@
 
 #include "asg/Identifier.hpp"
 #include "asg/Variable.hpp"
+#include "asg/Variableaccess.hpp"
 #include "asg/Assign.hpp"
 #include "asg/Arglist.hpp"
+#include "asg/LocationInfo.hpp"
+
+#include "detail/monostate.hpp"
 
 namespace ice_script { namespace asg {
 
 struct Functioncall;
 
 using VariantFunctioncallVariableType = boost::variant<
+        monostate,
         boost::recursive_wrapper<Functioncall>,
-        Variable
+        Variable,
+        Variableaccess
 >;
 
 // EXPRPOSTOP    ::= ('.' (FUNCCALL | IDENTIFIER)) | ('[' [IDENTIFIER ':'] ASSIGN {',' [IDENTIFIER ':' ASSIGN} ']') | ARGLIST | '++' | '--'
-struct Expressionpostoperator
+struct Expressionpostoperator : LocationInfo
 {
-    boost::variant<
-            VariantFunctioncallVariableType//,
-//            Arglist,
-    > value;
+    Expressionpostoperator() = default;
+    
+    Expressionpostoperator(VariantFunctioncallVariableType value) : value(std::move(value))
+    {}
+//    boost::variant<
+//            VariantFunctioncallVariableType//,
+////            Arglist,
+//    > value;
+    VariantFunctioncallVariableType value;
 //    std::string value;
 };
 

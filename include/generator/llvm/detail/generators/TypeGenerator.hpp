@@ -1,7 +1,7 @@
 #ifndef ICE_SCRIPT_GENERATOR_TYPEGENERATOR_HPP
 #define ICE_SCRIPT_GENERATOR_TYPEGENERATOR_HPP
 
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 
 #include "generator/llvm/Llvm.hpp"
 #include "generator/llvm/Context.hpp"
@@ -10,7 +10,7 @@
 
 namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Type& type);
+::llvm::Value* process(Context& context, Llvm& llvm, const Type& type);
 
 }}}}
 

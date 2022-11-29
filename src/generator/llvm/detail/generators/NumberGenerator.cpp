@@ -2,20 +2,20 @@
 
 #include "generator/llvm/detail/visitors/NumberVisitor.hpp"
 
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 
 namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
 using namespace ::llvm;
 using namespace ice_script::asg;
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Number& number)
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::Number& number)
 {
-    LOG_DEBUG((&logger), "Processing %s", typeid(number).name())
+    LOG_DEBUG((&context.logger()), "Processing %s", typeid(number).name())
 
     Scope& scope = context.scope();
 
-    NumberVisitor numberVisitor{logger, context, llvm};
+    NumberVisitor numberVisitor{context, llvm};
 
     return boost::get<::llvm::Value*>(boost::apply_visitor(numberVisitor, number.value));
 

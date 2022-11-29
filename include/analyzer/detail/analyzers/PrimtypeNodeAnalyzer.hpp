@@ -5,13 +5,13 @@
 
 #include "asg/Primativetype.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Primativetype process(logger::ILogger& logger, Context& context, const ast::PrimtypeNode& node);
+asg::Primativetype process(Context& context, const ast::PrimtypeNode& node);
 
 }}}
 

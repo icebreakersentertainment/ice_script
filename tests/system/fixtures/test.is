@@ -1,0 +1,67 @@
+//int i = 0;
+//
+//void test(int j, int k)
+//{
+//    int l = j + k;
+//    print("ok: " + l);
+//}
+
+//int test(uint8 a, uint8 b)
+//{
+////    int b = a;
+//
+//    if (a == 1)
+//    {
+//        a = 1;
+//    }
+//
+//    return a + b;
+//}
+
+//class Test
+//{
+//    int a;
+//}
+
+int main()
+{
+//    Test test;
+//    return test.a;
+
+//    double i = 1.0;
+//    double j = 2.0;
+//    double k = i + j;
+
+    int a = 0;
+//    if (a == 1 || a == 0)
+//    if (3 + 5 + 8.0 - 13 == 3)
+    if (a + 1.0 == 1.1 || a == 20)
+    {
+        a = 5;
+    }
+    else if (a + 1.0 == 1.1 || a == 20)
+    {
+        a = 4;
+    }
+    else
+    {
+        a = 3;
+    }
+
+    for (int i=0; i < 10; i++)
+//    while (a < 10)
+    {
+        a = a + 1;
+    }
+
+//    a = a + b;
+
+    //printf("%d", k);
+
+//    int result = 123413456;
+//    uint8 result = 0.0;
+//    int a = test(1, 1);
+
+//    return -123413456;
+    return a;
+}

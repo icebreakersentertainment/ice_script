@@ -1,0 +1,33 @@
+@startuml
+'scale 200 width
+'scale 500 height
+'left to right direction
+
+set namespaceSeparator ::
+
+namespace analyzer {
+
+class Scope
+{
+    + Scope* parent()
+    + Scope& createChild()
+    + std::vector<Scope*> children()
+    + SymbolTable& symbolTable()
+}
+
+class Context
+{
+    + Scope& scope()
+    + TypeTable& typeTable()
+    + Scope& pushScope()
+    + Scope& popScope()
+}
+
+interface IAnalyzer
+{
+    Asg parse(const ast::Ast& ast)
+}
+
+}
+
+@enduml

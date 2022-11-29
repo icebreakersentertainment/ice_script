@@ -13,7 +13,7 @@ namespace ice_script { namespace generator { namespace llvm { namespace detail {
 class BinaryOperatorFactory
 {
 public:
-    BinaryOperatorFactory(logger::ILogger& logger, Context& context, Llvm& llvm) : logger_(&logger), context_(&context), llvm_(&llvm)
+    BinaryOperatorFactory(Context& context, Llvm& llvm) : context_(&context), llvm_(&llvm)
     {
 
     }
@@ -43,7 +43,6 @@ public:
         throw RuntimeException("");
     }
 private:
-    logger::ILogger* logger_;
     Context* context_;
     Llvm* llvm_;
 };

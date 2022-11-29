@@ -3,14 +3,14 @@
 
 #include <string>
 
+#include "ast/BitwiseOperator.hpp"
 
 namespace ice_script { namespace asg {
 
 // BITOP         ::= '&' | '|' | '^' | '<<' | '>>' | '>>>'
-
 struct Bitoperator
 {
-    std::string value;
+    ast::BitwiseOperator bitwiseOperator;
 };
 
 }}

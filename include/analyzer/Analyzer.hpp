@@ -1,6 +1,9 @@
 #ifndef ICE_SCRIPT_ANALYZER_ANALYZER_HPP
 #define ICE_SCRIPT_ANALYZER_ANALYZER_HPP
 
+#include "type/TypeTable.hpp"
+#include "symbol/SymbolTable.hpp"
+
 #include "ast/Ast.hpp"
 #include "asg/Asg.hpp"
 
@@ -16,7 +19,7 @@ public:
 
     }
 
-    asg::Asg parse(const ast::Ast& ast);
+    asg::Asg parse(TypeTable& typeTable, SymbolTable& symbolTable, const ast::Ast& ast);
 
 private:
     logger::ILogger* logger_;

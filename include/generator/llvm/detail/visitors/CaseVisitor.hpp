@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_CASEVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_CASEVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/ExpressionGenerator.hpp"
+#include "generator/llvm/detail/generators/StatementGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        CaseVisitorResultType operator()(const asg::Expression& expression);
-    CaseVisitorResultType operator()(const asg::Statement& statement);
+    CaseVisitorResultType operator()(const asg::Expression& expression)
+    {
+        return process(*context_, *llvm_, expression);
+    }
+
+    CaseVisitorResultType operator()(const asg::Statement& statement)
+    {
+        return process(*context_, *llvm_, statement);
+    }
+
 };
 
 }}}}

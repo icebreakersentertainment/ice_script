@@ -11,26 +11,35 @@
 #include <boost/variant/variant.hpp>
 #include <boost/optional/optional.hpp>
 
+#include "type/TypeQualifier.hpp"
+#include "type/TypeModifier.hpp"
+
 #include "ast/LocationInfo.hpp"
 #include "ast/ScopeNode.hpp"
 #include "ast/DatatypeNode.hpp"
+
+#include "detail/monostate.hpp"
 
 namespace ice_script { namespace ast {
 
 struct TypeNode;
 
-typedef boost::optional<std::vector<boost::recursive_wrapper<TypeNode>>> TypeNodeTemplates;
+using TypeNodeTemplates = boost::optional<std::vector<boost::recursive_wrapper<TypeNode>>>;
 
 struct TypeNode : LocationInfo
 {
     // TYPE          ::= ['const'] SCOPE DATATYPE ['<' TYPE {',' TYPE} '>'] { ('[' ']') | ('@' ['const']) }
-    boost::optional<std::string> isConst;
+    std::vector<TypeQualifier::TypeQualifierFlags> typeQualifiers;
+    // boost::optional<TypeQualifier::TypeQualifierFlags> typeQualifiers;
     ScopeNode scopeNode;
     DatatypeNode datatypeNode;
     TypeNodeTemplates templates;
-    std::vector<
-            boost::variant<std::string, boost::tuple<std::string, boost::optional<std::string>>>
-    > bracketsOrAtOptionalConst;
+//     std::vector<
+//             boost::variant<monostate, std::string, boost::tuple<std::string, boost::optional<std::string>>>
+//     > bracketsOrAtOptionalConst;
+    std::vector<boost::optional<uint32_t>> array;
+    boost::optional<TypeModifier> typeModifier;
+    bool constant;
 //    std::string value;
 };
 
@@ -38,11 +47,14 @@ struct TypeNode : LocationInfo
 
 BOOST_FUSION_ADAPT_STRUCT(
         ice_script::ast::TypeNode,
-        isConst,
+        typeQualifiers,
         scopeNode,
         datatypeNode,
         templates,
-        bracketsOrAtOptionalConst
+        // bracketsOrAtOptionalConst,
+        array,
+        typeModifier,
+        constant
 //        value
 )
 

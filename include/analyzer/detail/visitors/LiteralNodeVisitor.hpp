@@ -1,12 +1,14 @@
 #ifndef ICE_SCRIPT_ANALYZER_LITERALNODEVISITOR_HPP
 #define ICE_SCRIPT_ANALYZER_LITERALNODEVISITOR_HPP
 
-#include <string>
-
 #include "ast/Ast.hpp"
 #include "asg/Asg.hpp"
 
 #include "analyzer/detail/visitors/AbstractVisitor.hpp"
+
+#include "analyzer/detail/analyzers/NumberNodeAnalyzer.hpp"
+#include "analyzer/detail/analyzers/StringNodeAnalyzer.hpp"
+#include "analyzer/detail/analyzers/BitsNodeAnalyzer.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -27,11 +29,30 @@ public:
 
     using AbstractVisitor::operator();
 
-    LiteralNodeVisitorResultType operator()(const ast::NumberNode& node);
-    LiteralNodeVisitorResultType operator()(const ast::StringNode& node);
-    LiteralNodeVisitorResultType operator()(const ast::BitsNode& node);
-    LiteralNodeVisitorResultType operator()(const ast::BoolNode& node);
-    LiteralNodeVisitorResultType operator()(const ast::NullNode& node);
+    LiteralNodeVisitorResultType operator()(const ast::NumberNode& node)
+    {
+        return process(*context_, node);
+    }
+
+    LiteralNodeVisitorResultType operator()(const ast::StringNode& node)
+    {
+        return process(*context_, node);
+    }
+
+    LiteralNodeVisitorResultType operator()(const ast::BitsNode& node)
+    {
+        return process(*context_, node);
+    }
+
+    LiteralNodeVisitorResultType operator()(const ast::BoolNode& node)
+    {
+        return node.value;
+    }
+
+    LiteralNodeVisitorResultType operator()(const ast::NullNode& node)
+    {
+        return node.value;
+    }
 };
 
 }}}

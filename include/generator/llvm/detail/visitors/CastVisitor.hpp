@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_CASTVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_CASTVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/TypeGenerator.hpp"
+#include "generator/llvm/detail/generators/AssignGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        CastVisitorResultType operator()(const asg::Type& type);
-    CastVisitorResultType operator()(const asg::Assign& assign);
+    CastVisitorResultType operator()(const Type& type)
+    {
+        return process(*context_, *llvm_, type);
+    }
+
+    CastVisitorResultType operator()(const asg::Assign& assign)
+    {
+        return process(*context_, *llvm_, assign);
+    }
+
 };
 
 }}}}

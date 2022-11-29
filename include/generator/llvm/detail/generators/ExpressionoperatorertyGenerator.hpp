@@ -12,7 +12,7 @@
 
 namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
-ExpressionoperatorertyVisitorResultType process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Expressionoperatorerty& expressionoperatorerty);
+ExpressionoperatorertyVisitorResultType process(Context& context, Llvm& llvm, const asg::Expressionoperatorerty& expressionoperatorerty);
 
 }}}}
 

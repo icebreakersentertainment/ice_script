@@ -1,19 +1,22 @@
 #include "analyzer/detail/analyzers/ExprpostopNodeAnalyzer.hpp"
 
+#include "analyzer/detail/visitors/ExprpostopNodeVisitor.hpp"
+
 namespace ice_script { namespace analyzer { namespace detail {
 
 using namespace ice_script::ast;
 using namespace ice_script::asg;
 
-asg::Expressionpostoperator process(logger::ILogger& logger, Context& context, const ast::ExprpostopNode& node)
+asg::Expressionpostoperator process(Context& context, const ast::ExprpostopNode& node)
 {
-    LOG_DEBUG((&logger), "Analyzing %s", typeid(node).name())
+    LOG_DEBUG((&context.logger()), "Analyzing %s", typeid(node).name())
 
     Scope& scope = context.scope();
 
     Expressionpostoperator expressionpostoperator{};
 
-//    expression.expressionterm = boost::get<Expressionterm>(operator()(node.exprtermNode));
+    ExprpostopNodeVisitor visitor{context};
+    expressionpostoperator.value = boost::apply_visitor(visitor, node.value);
 
     return expressionpostoperator;
 }

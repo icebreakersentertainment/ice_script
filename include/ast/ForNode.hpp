@@ -12,6 +12,8 @@
 
 #include "ast/LocationInfo.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct VarNode;
@@ -21,10 +23,11 @@ struct StatementNode;
 
 struct ForNode : LocationInfo
 {
-    boost::variant<boost::recursive_wrapper<VarNode>, boost::recursive_wrapper<ExprstatNode>>  varOrExprstatNode;
+    boost::variant<monostate, boost::recursive_wrapper<VarNode>, boost::recursive_wrapper<ExprstatNode>>  varOrExprstatNode;
     boost::recursive_wrapper<ExprstatNode> exprstatNode;
     std::vector<boost::recursive_wrapper<AssignNode>> assignNodes;
-    std::vector<boost::recursive_wrapper<StatementNode>> statementNode;
+//    std::vector<boost::recursive_wrapper<StatementNode>> statementNode;
+    boost::recursive_wrapper<StatementNode> statementNode;
 
 //    std::string value;
 };

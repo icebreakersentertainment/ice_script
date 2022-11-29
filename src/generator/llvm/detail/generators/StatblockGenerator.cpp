@@ -8,13 +8,13 @@ namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
 using namespace ice_script::asg;
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Statblock& statblock)
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::Statblock& statblock)
 {
-    LOG_DEBUG((&logger), "Processing %s", typeid(statblock).name())
+    LOG_DEBUG((&context.logger()), "Processing %s", typeid(statblock).name())
 
     Scope& scope = context.scope();
 
-    StatblockVisitor visitor{logger, context, llvm};
+    StatblockVisitor visitor{context, llvm};
     for (const auto& variableOrStatement : statblock.values)
     {
         boost::apply_visitor(visitor, variableOrStatement);

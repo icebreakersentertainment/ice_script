@@ -3,14 +3,14 @@
 
 #include <string>
 
+#include "ast/LogicOperator.hpp"
 
 namespace ice_script { namespace asg {
 
 // LOGICOP       ::= '&&' | '||' | '^^' | 'and' | 'or' | 'xor'
-
 struct Logicoperator
 {
-    std::string value;
+    ast::LogicOperator logicOperator;
 };
 
 }}

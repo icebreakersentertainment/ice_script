@@ -1,7 +1,7 @@
 #ifndef ICE_SCRIPT_FLOAT_HPP
 #define ICE_SCRIPT_FLOAT_HPP
 
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 
 namespace ice_script { namespace asg {
 

@@ -13,6 +13,9 @@
 #include <boost/optional/optional.hpp>
 
 #include "ast/LocationInfo.hpp"
+#include "ast/PostfixOperator.hpp"
+
+#include "detail/monostate.hpp"
 
 namespace ice_script { namespace ast {
 
@@ -21,27 +24,28 @@ struct IdentifierNode;
 struct AssignNode;
 struct ArglistNode;
 
+using FunccallOrIdentifierType = boost::variant<monostate, boost::recursive_wrapper<FunccallNode>, boost::recursive_wrapper<IdentifierNode>>;
+
+// using OptionalIdentifierAssignVectorTupleOptionalIdentifierAssignType = boost::tuple<
+//         boost::optional<boost::recursive_wrapper<IdentifierNode>>,
+//         boost::recursive_wrapper<AssignNode>,
+//         std::vector<
+//                 boost::tuple<
+//                         boost::optional<boost::recursive_wrapper<IdentifierNode>>,
+//                         boost::recursive_wrapper<AssignNode>
+//                 >
+//         >
+// >;
+
 struct ExprpostopNode : LocationInfo
 {
-    // (funccallRule | identifierRule)
-    // | (-(identifierRule >> lit(":")) >> assignRule >> *(lit(",") >> -(identifierRule >> lit(":")) >> assignRule))
-    // | arglistRule
-    // | string("++")
-    // | string("--");
     boost::variant<
-            boost::variant<boost::recursive_wrapper<FunccallNode>, boost::recursive_wrapper<IdentifierNode>>,
-            boost::tuple<
-                    boost::optional<boost::recursive_wrapper<IdentifierNode>>,
-                    boost::recursive_wrapper<AssignNode>,
-                    std::vector<
-                            boost::tuple<
-                                    boost::optional<boost::recursive_wrapper<IdentifierNode>>,
-                                    boost::recursive_wrapper<AssignNode>
-                            >
-                    >
-            >,
+            monostate,
+            FunccallOrIdentifierType,
+        //     OptionalIdentifierAssignVectorTupleOptionalIdentifierAssignType,
+            boost::recursive_wrapper<AssignNode>,
             boost::recursive_wrapper<ArglistNode>,
-            std::string
+            PostfixOperator
 
     > value;
 //    std::string value;

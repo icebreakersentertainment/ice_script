@@ -1,6 +1,8 @@
 #include "parser/rules/TypeRule.hpp"
 #include "parser/rules/ScopeRule.hpp"
 #include "parser/rules/DatatypeRule.hpp"
+#include "parser/rules/TypeQualifierRule.hpp"
+#include "parser/rules/TypeModifierRule.hpp"
 
 namespace ice_script { namespace parser { namespace rules {
 
@@ -18,6 +20,11 @@ using ascii::space_type;
 
 // TYPE          ::= ['const'] SCOPE DATATYPE ['<' TYPE {',' TYPE} '>'] { ('[' ']') | ('@' ['const']) }
 //    typeRule = qi::eps >> -string("const") >> scopeRule.alias() >> datatypeRule.alias() >> -(lit("<") >> typeRule >> typeRule % ',' >> lit(">")) >> *( as_string[string("[") >> string("]")] | (as_string[string("@")] >> -as_string[string("const")]) );
-TypeRuleType typeRule = qi::eps >> -string("const") >> scopeRule.alias() >> datatypeRule.alias() >> -(lit("<") >> typeRule % ',' >> lit(">")) >> *( as_string[string("[") >> string("]")] | (as_string[string("@")] >> -as_string[string("const")]) );
+TypeRuleType typeRule = qi::eps >> *typeQualifierRule >> scopeRule.alias() >> datatypeRule.alias()
+    >> -(lit("<") >> typeRule % ',' >> lit(">"))
+    >> *(lit("[") >> -int_ >> lit("]"))
+    >> -(typeModifierRule)
+    >> matches["const"]
+    ;
 
 }}}

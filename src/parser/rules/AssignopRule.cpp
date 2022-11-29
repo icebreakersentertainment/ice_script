@@ -1,4 +1,5 @@
 #include "parser/rules/AssignopRule.hpp"
+#include "parser/rules/AssignOperatorRule.hpp"
 
 namespace ice_script { namespace parser { namespace rules {
 
@@ -14,22 +15,7 @@ using ascii::char_;
 using ascii::space;
 using ascii::space_type;
 
-AssignopRuleType
-    // ASSIGNOP      ::= '=' | '+=' | '-=' | '*=' | '/=' | '|=' | '&=' | '^=' | '%=' | '**=' | '<<=' | '>>=' | '>>>='
-    assignopRule = qi::eps >> (
-            string("=")
-            | string("+=")
-            | string("-=")
-            | string("*=")
-            | string("/=")
-            | string("|=")
-            | string("&=")
-            | string("^=")
-            | string("%=")
-            | string("**=")
-            | string("<<=")
-            | string(">>=")
-            | string(">>>=")
-    );
+// ASSIGNOP      ::= '=' | '+=' | '-=' | '*=' | '/=' | '|=' | '&=' | '^=' | '%=' | '**=' | '<<=' | '>>=' | '>>>='
+AssignopRuleType assignopRule = qi::eps >> assignOperatorRule;
 
 }}}

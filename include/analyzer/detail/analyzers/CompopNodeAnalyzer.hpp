@@ -5,13 +5,13 @@
 
 #include "asg/Comparisonoperator.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Comparisonoperator process(logger::ILogger& logger, Context& context, const ast::CompopNode& node);
+asg::Comparisonoperator process(Context& context, const ast::CompopNode& node);
 
 }}}
 

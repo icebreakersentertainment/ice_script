@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_CONSTRUCTCALLVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_CONSTRUCTCALLVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/TypeGenerator.hpp"
+#include "generator/llvm/detail/generators/ArglistGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        ConstructcallVisitorResultType operator()(const asg::Type& type);
-    ConstructcallVisitorResultType operator()(const asg::Arglist& arglist);
+    ConstructcallVisitorResultType operator()(const Type& type)
+    {
+        return process(*context_, *llvm_, type);
+    }
+
+    ConstructcallVisitorResultType operator()(const asg::Arglist& arglist)
+    {
+        return process(*context_, *llvm_, arglist);
+    }
+
 };
 
 }}}}

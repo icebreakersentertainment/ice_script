@@ -8,13 +8,13 @@ namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
 using namespace ice_script::asg;
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Statement& statement)
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::Statement& statement)
 {
-    LOG_DEBUG((&logger), "Processing %s", typeid(statement).name())
+    LOG_DEBUG((&context.logger()), "Processing %s", typeid(statement).name())
 
     Scope& scope = context.scope();
 
-    StatementVisitor visitor{logger, context, llvm};
+    StatementVisitor visitor{context, llvm};
     return boost::get<::llvm::Value*>(boost::apply_visitor(visitor, statement.value));
 
 //    return nullptr;

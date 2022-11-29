@@ -4,9 +4,9 @@ namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
 using namespace ice_script::asg;
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Functionattribute& functionattribute)
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::Functionattribute& functionattribute)
 {
-    LOG_DEBUG((&logger), "Processing %s", typeid(functionattribute).name())
+    LOG_DEBUG((&context.logger()), "Processing %s", typeid(functionattribute).name())
 
     Scope& scope = context.scope();
 

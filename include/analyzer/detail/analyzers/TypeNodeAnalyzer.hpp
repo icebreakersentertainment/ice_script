@@ -3,15 +3,15 @@
 
 #include "ast/TypeNode.hpp"
 
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Type process(logger::ILogger& logger, Context& context, const ast::TypeNode& node);
+Type process(Context& context, const ast::TypeNode& node);
 
 }}}
 

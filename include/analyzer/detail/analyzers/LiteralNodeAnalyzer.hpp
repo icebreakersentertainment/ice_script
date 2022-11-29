@@ -5,13 +5,13 @@
 
 #include "asg/Literal.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Literal process(logger::ILogger& logger, Context& context, const ast::LiteralNode& node);
+asg::Literal process(Context& context, const ast::LiteralNode& node);
 
 }}}
 

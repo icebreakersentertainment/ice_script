@@ -22,16 +22,15 @@ using ascii::space_type;
 IdentifierRuleType _identifierRule = identifierRule.alias();
 FuncRuleType _funcRule = funcRule.alias();
 
-ClassRuleType
-    // CLASS         ::= {'shared' | 'abstract' | 'final' | 'external'} 'class' IDENTIFIER (';' | ([':' IDENTIFIER {',' IDENTIFIER}] '{' {VIRTPROP | FUNC | VAR | FUNCDEF} '}'))
-    classRule = qi::eps >>
+// CLASS         ::= {'shared' | 'abstract' | 'final' | 'external'} 'class' IDENTIFIER (';' | ([':' IDENTIFIER {',' IDENTIFIER}] '{' {VIRTPROP | FUNC | VAR | FUNCDEF} '}'))
+ClassRuleType classRule = qi::eps >>
             *(string("shared") | string("abstract") | string("final") | string("external"))
             >> lit("class") >> identifierRule.alias()
             >> (
                     lit(";")
                     |
                     (
-                            -(string(":") >> _identifierRule >> _identifierRule % ',')
+                            -(lit(":") >> _identifierRule >> _identifierRule % ',')
                             >> lit("{") >> *(virtpropRule.alias() | _funcRule | varRule.alias() | funcdefRule.alias()) >> lit("}")
                     )
             )

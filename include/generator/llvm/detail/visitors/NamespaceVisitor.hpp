@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_NAMESPACEVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_NAMESPACEVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/IdentifierGenerator.hpp"
+#include "generator/llvm/detail/generators/ScriptGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        NamespaceVisitorResultType operator()(const asg::Identifier& identifier);
-    NamespaceVisitorResultType operator()(const asg::Script& script);
+    NamespaceVisitorResultType operator()(const asg::Identifier& identifier)
+    {
+        return process(*context_, *llvm_, identifier);
+    }
+
+    NamespaceVisitorResultType operator()(const asg::Script& script)
+    {
+        return process(*context_, *llvm_, script);
+    }
+
 };
 
 }}}}

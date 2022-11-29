@@ -10,35 +10,43 @@ namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
 using namespace ice_script::asg;
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Expressionterm& expressionterm)
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::Expressionterm& expressionterm)
 {
-    LOG_DEBUG((&logger), "Processing %s", typeid(expressionterm).name())
+    LOG_DEBUG((&context.logger()), "Processing %s", typeid(expressionterm).name())
 
     Scope& scope = context.scope();
 
-    ExpressiontermVisitor visitor{logger, context, llvm};
+    ExpressiontermVisitor visitor{context, llvm};
     return boost::get<::llvm::Value*>(boost::apply_visitor(visitor, expressionterm.value));
 
 //    return nullptr;
 }
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::VectorExprpreopExprvalueVectorExprpreopType& vectorExprpreopExprvalueVectorExprpreop)
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::ExprpreopsExprvalueExprpostops& exprpreopsExprvalueExprpostops)
 {
-    LOG_DEBUG((&logger), "Processing %s", typeid(vectorExprpreopExprvalueVectorExprpreop).name())
+    LOG_DEBUG((&context.logger()), "Processing %s", typeid(exprpreopsExprvalueExprpostops).name())
 
     Scope& scope = context.scope();
 
-    const auto& expressionvalue = boost::get<1>(vectorExprpreopExprvalueVectorExprpreop);
-    const auto& expressionpostoperators = boost::get<2>(vectorExprpreopExprvalueVectorExprpreop);
+//    const auto& expressionvalue = exprpreopsExprvalueExprpostops.expressionValue;
+//    const auto& expressionpostoperators = exprpreopsExprvalueExprpostops.expressionPostoperators;
+//
+//    if (expressionvalue.value.which() == 2)
+//    {
+//        auto v = boost::get<Functioncall>(expressionvalue.value);
+//
+//    }
 
-    auto value = process(logger, context, llvm, expressionvalue);
+    auto value = process(context, llvm, exprpreopsExprvalueExprpostops.expressionValue);
 
-    for (const auto& expressionpostoperator : expressionpostoperators)
+    for (const auto& expressionpostoperator : exprpreopsExprvalueExprpostops.expressionPostoperators)
     {
         scope.set(value);
 
-        value = process(logger, context, llvm, expressionpostoperator.get());
+        value = process(context, llvm, expressionpostoperator.get());
     }
+    
+    scope.set(static_cast<::llvm::Value*>(nullptr));
 
     return value;
 

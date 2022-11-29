@@ -16,9 +16,9 @@ struct annotation_f
     template<typename Val, typename First, typename Last>
     void operator()(Val& v, First f, Last l) const
     {
-//        std::cerr << "\nannotating " << typeid(v).name() << " '" << std::string(f,l) << "'\n";
+//        std::cerr << "\nannotating: " << typeid(v).name() << " '" << std::string(f,l) << "'\n";
         do_annotate(v, f, l, first);
-//        std::cerr << "\nannotating done " << typeid(v).name() << " '" << std::string(f,l) << "'\n";
+//        std::cerr << "\nannotating done " << typeid(v).name() << "\n";//" '" << std::string(f,l) << "'\n";
     }
 private:
     void static do_annotate(ast::LocationInfo& li, It f, It l, It first) {

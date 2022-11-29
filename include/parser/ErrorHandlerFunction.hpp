@@ -1,6 +1,8 @@
 #ifndef ICE_SCRIPT_ERRORHANDLERFUNCTION_HPP
 #define ICE_SCRIPT_ERRORHANDLERFUNCTION_HPP
 
+#include <iomanip>
+
 namespace ice_script { namespace parser {
 
 struct error_handler_f

@@ -5,6 +5,9 @@
 
 #include "generator/IGenerator.hpp"
 
+#include "type/TypeTable.hpp"
+#include "symbol/SymbolTable.hpp"
+
 #include "asg/Asg.hpp"
 
 #include "logger/ILogger.hpp"
@@ -19,7 +22,7 @@ public:
     LlvmIr(logger::ILogger& logger);
 //    ~LlvmIr() override = default;
 
-    std::string generate(const asg::Asg& asg) override;
+    std::string generate(const TypeTable& typeTable, const SymbolTable& symbolTable, const asg::Asg& asg) override;
 
 private:
     logger::ILogger* logger_;

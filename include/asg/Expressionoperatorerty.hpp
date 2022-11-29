@@ -7,13 +7,16 @@
 #include "asg/Comparisonoperator.hpp"
 #include "asg/Logicoperator.hpp"
 #include "asg/Bitoperator.hpp"
+#include "asg/LocationInfo.hpp"
+
+#include "detail/monostate.hpp"
 
 namespace ice_script { namespace asg {
 
 // EXPROP        ::= MATHOP | COMPOP | LOGICOP | BITOP
-struct Expressionoperatorerty
+struct Expressionoperatorerty : LocationInfo
 {
-    boost::variant<Bitoperator, Mathoperator, Comparisonoperator, Logicoperator> value;
+    boost::variant<monostate, Bitoperator, Mathoperator, Comparisonoperator, Logicoperator> value;
 };
 
 }}

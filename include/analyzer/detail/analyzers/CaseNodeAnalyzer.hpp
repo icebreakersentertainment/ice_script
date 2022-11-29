@@ -5,13 +5,13 @@
 
 #include "asg/Case.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Case process(logger::ILogger& logger, Context& context, const ast::CaseNode& node);
+asg::Case process(Context& context, const ast::CaseNode& node);
 
 }}}
 

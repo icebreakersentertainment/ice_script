@@ -1,4 +1,5 @@
 #include "ast/AstPrinter.hpp"
+#include <string>
 
 // Adapted from: https://stackoverflow.com/a/45677131
 template<int N, typename... Ts> using NthTypeOf = typename std::tuple_element<N, std::tuple<Ts...>>::type;
@@ -47,6 +48,31 @@ void AstPrinter::operator()(const ScriptNode& node) const
 void AstPrinter::operator()(const ClassNode& node) const
 {
     printBasic(node);
+
+    AstPrinter astPrinter{os_, printLocationInfo_, indent_ + TAB_SIZE};
+
+    for (const auto& type : node.type)
+    {
+        os_ << "[" << type << "]" << std::endl;
+    }
+
+    astPrinter.operator()(node.identifierNode);
+
+    if (node.value)
+    {
+        if (node.value.get().extendsAndImplements)
+        {
+            for (const auto& extendsAndImplements: node.value.get().extendsAndImplements.get())
+            {
+                astPrinter.operator()(extendsAndImplements);
+            }
+        }
+
+        for (const auto& virtualPropertyFunctionVariableFunctionDefinition : node.value.get().virtualPropertyFunctionVariableFunctionDefinitions)
+        {
+            boost::apply_visitor(astPrinter, virtualPropertyFunctionVariableFunctionDefinition);
+        }
+    }
 }
 
 void AstPrinter::operator()(const TypedefNode& node) const
@@ -162,7 +188,23 @@ void AstPrinter::operator()(const TypemodNode& node) const
 
 void AstPrinter::operator()(const TypeNode& node) const
 {
-    printBasic(node);
+    printBasic(node, false);
+    
+    std::string typeQualifiers{};
+    for (size_t i = 0; i < node.typeQualifiers.size(); ++i)
+    {
+        typeQualifiers += (i > 0 ? " " : "") + toString(node.typeQualifiers[i]);
+    }
+    
+    std::string array{};
+    for (const auto& optionalArray : node.array)
+    {
+        array += "[" + (optionalArray ? std::to_string(optionalArray.get()) : "") + "]";
+    }
+    
+    const auto typeModifier = node.typeModifier ? toString(node.typeModifier.get()) : "";
+    
+    os_ << "[" << typeQualifiers << array << typeModifier << "]" << std::endl;
 
     AstPrinter astPrinter{os_, printLocationInfo_, indent_ + TAB_SIZE};
 
@@ -195,7 +237,7 @@ void AstPrinter::operator()(const PrimtypeNode& node) const
 {
     printBasic(node, false);
 
-    os_ << "[" << static_cast<uint32_t>(node.primitiveType) << "]" << std::endl;
+    os_ << "[" << toString(node.primitiveType) << "]" << std::endl;
 }
 
 void AstPrinter::operator()(const FuncattrNode& node) const
@@ -239,6 +281,19 @@ void AstPrinter::operator()(const BreakNode& node) const
 void AstPrinter::operator()(const ForNode& node) const
 {
     printBasic(node);
+
+    AstPrinter astPrinter{os_, printLocationInfo_, indent_ + TAB_SIZE};
+
+    boost::apply_visitor(astPrinter, node.varOrExprstatNode);
+
+    astPrinter.operator()(node.exprstatNode.get());
+
+    for (const auto& assignNode : node.assignNodes)
+    {
+        astPrinter.operator()(assignNode.get());
+    }
+
+    astPrinter.operator()(node.statementNode.get());
 }
 
 void AstPrinter::operator()(const WhileNode& node) const
@@ -254,6 +309,16 @@ void AstPrinter::operator()(const DowhileNode& node) const
 void AstPrinter::operator()(const IfNode& node) const
 {
     printBasic(node);
+
+    AstPrinter astPrinter{os_, printLocationInfo_, indent_ + TAB_SIZE};
+
+    astPrinter.operator()(node.assignNode.get());
+    astPrinter.operator()(node.statementNode.get());
+
+    if (node.optionalStatementNode)
+    {
+        astPrinter.operator()(node.optionalStatementNode.get().get());
+    }
 }
 
 void AstPrinter::operator()(const ContinueNode& node) const
@@ -264,6 +329,13 @@ void AstPrinter::operator()(const ContinueNode& node) const
 void AstPrinter::operator()(const ExprstatNode& node) const
 {
     printBasic(node);
+
+    if (node.value)
+    {
+        AstPrinter astPrinter{os_, printLocationInfo_, indent_ + TAB_SIZE};
+
+        astPrinter.operator()(node.value.get());
+    }
 }
 
 void AstPrinter::operator()(const TryNode& node) const
@@ -296,10 +368,10 @@ void AstPrinter::operator()(const ExprNode& node) const
 
     astPrinter.operator()(node.exprtermNode.get());
 
-    for (const auto& value : node.value)
+    for (const auto& expropNodeAndExprtermNode : node.expropNodeAndExprtermNodes)
     {
-        astPrinter.operator()(boost::get<0>(value));
-        astPrinter.operator()(boost::get<1>(value));
+        astPrinter.operator()(expropNodeAndExprtermNode.expropNode);
+        astPrinter.operator()(expropNodeAndExprtermNode.exprtermNode);
     }
 }
 
@@ -307,21 +379,21 @@ void AstPrinter::operator()(const ExprtermNode& node) const
 {
     printBasic(node);
 
-    if (node.value.which() == 1)
+    if (node.value.which() == 2)
     {
         AstPrinter astPrinter{os_, printLocationInfo_, indent_ + TAB_SIZE};
 
-        const auto& vectorExprpreopExprvalueVectorExprpreop = get<1>(node.value);
+        const auto& exprpreopsExprvalueExprpostops = get<2>(node.value);
 
-        const auto& exprPreopNodes = get<0>(vectorExprpreopExprvalueVectorExprpreop);
+        const auto& exprPreopNodes = exprpreopsExprvalueExprpostops.exprPreopNodes;
 
         for (const auto& exprPreopNode : exprPreopNodes) astPrinter.operator()(exprPreopNode);
 
-        const auto& exprValueNode = boost::get<1>(vectorExprpreopExprvalueVectorExprpreop);
+        const auto& exprValueNode = exprpreopsExprvalueExprpostops.exprValueNode;
 
         astPrinter.operator()(exprValueNode);
 
-        const auto& exprPostopNodes = get<2>(vectorExprpreopExprvalueVectorExprpreop);
+        const auto& exprPostopNodes = exprpreopsExprvalueExprpostops.exprPostopNodes;
 
         for (const auto& exprPostopNode : exprPostopNodes) astPrinter.operator()(exprPostopNode);
     }
@@ -395,6 +467,13 @@ void AstPrinter::operator()(const VaraccessNode& node) const
 void AstPrinter::operator()(const ArglistNode& node) const
 {
     printBasic(node);
+
+    AstPrinter astPrinter{os_, printLocationInfo_, indent_ + TAB_SIZE};
+
+    for (const auto& argument : node.value)
+    {
+        astPrinter.operator()(argument.assignNode);
+    }
 }
 
 void AstPrinter::operator()(const AssignNode& node) const
@@ -405,10 +484,10 @@ void AstPrinter::operator()(const AssignNode& node) const
 
     astPrinter.operator()(node.conditionNode);
 
-    if (node.assignopNodeAssignNode)
+    if (node.assignopAssignNode)
     {
-        astPrinter.operator()(boost::get<0>(node.assignopNodeAssignNode.get()));
-        astPrinter.operator()(boost::get<1>(node.assignopNodeAssignNode.get()));
+        astPrinter.operator()(node.assignopAssignNode.get().assignopNode);
+        astPrinter.operator()(node.assignopAssignNode.get().assignNode);
     }
 }
 
@@ -443,22 +522,28 @@ void AstPrinter::operator()(const MathopNode& node) const
 {
     printBasic(node, false);
 
-    os_ << "[" << static_cast<uint32_t>(node.mathOperator) << "]" << std::endl;
+    os_ << "[" << toString(node.mathOperator) << "]" << std::endl;
 }
 
 void AstPrinter::operator()(const CompopNode& node) const
 {
-    printBasic(node);
+    printBasic(node, false);
+
+    os_ << "[" << toString(node.comparisonOperator) << "]" << std::endl;
 }
 
 void AstPrinter::operator()(const LogicopNode& node) const
 {
-    printBasic(node);
+    printBasic(node, false);
+
+    os_ << "[" << toString(node.logicOperator) << "]" << std::endl;
 }
 
 void AstPrinter::operator()(const AssignopNode& node) const
 {
-    printBasic(node);
+    printBasic(node, false);
+
+    os_ << "[" << toString(node.assignOperator) << "]" << std::endl;
 }
 
 void AstPrinter::operator()(const IdentifierNode& node) const

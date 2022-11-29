@@ -6,7 +6,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-#include "ast/MathOpNode.hpp"
+#include "ast/MathopNode.hpp"
 
 #include "parser/Iterator.hpp"
 #include "parser/Skipper.hpp"
@@ -22,6 +22,7 @@ struct MathOperatorSymbols : boost::spirit::qi::symbols<char, ast::MathOperator>
             ("-", ast::MathOperator::SUBTRACT)
             ("*", ast::MathOperator::MULTIPLY)
             ("/", ast::MathOperator::DIVIDE)
+            ("%", ast::MathOperator::MODULOS)
             ("**", ast::MathOperator::EXPONENT)
         ;
     }

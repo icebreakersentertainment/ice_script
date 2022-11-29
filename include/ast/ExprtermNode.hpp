@@ -14,6 +14,8 @@
 
 #include "ast/LocationInfo.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct LocationInfo;
@@ -23,18 +25,26 @@ struct ExprpreopNode;
 struct ExprvalueNode;
 struct ExprpostopNode;
 
+struct ExprpreopsExprvalueExprpostops
+{
+    std::vector<boost::recursive_wrapper<ExprpreopNode>> exprPreopNodes;
+    boost::recursive_wrapper<ExprvalueNode> exprValueNode;
+    std::vector<boost::recursive_wrapper<ExprpostopNode>> exprPostopNodes;
+};
+
 using OptionalTypeAndInitListType = boost::tuple<boost::optional<boost::recursive_wrapper<TypeNode>>, boost::recursive_wrapper<InitlistNode>>;
-using VectorExprpreopExprvalueVectorExprpreopType = boost::tuple<
-        std::vector<boost::recursive_wrapper<ExprpreopNode>>,
-        boost::recursive_wrapper<ExprvalueNode>,
-        std::vector<boost::recursive_wrapper<ExprpostopNode>>
->;
+//using VectorExprpreopExprvalueVectorExprpreopType = boost::tuple<
+//        std::vector<boost::recursive_wrapper<ExprpreopNode>>,
+//        boost::recursive_wrapper<ExprvalueNode>,
+//        std::vector<boost::recursive_wrapper<ExprpostopNode>>
+//>;
 
 struct ExprtermNode : LocationInfo
 {
     boost::variant<
+            monostate,
             OptionalTypeAndInitListType,
-            VectorExprpreopExprvalueVectorExprpreopType
+            ExprpreopsExprvalueExprpostops
     > value;
 //    std::string value;
 };
@@ -47,6 +57,13 @@ struct ExprtermNode : LocationInfo
 #include "ast/ExprpreopNode.hpp"
 #include "ast/ExprvalueNode.hpp"
 #include "ast/ExprpostopNode.hpp"
+
+BOOST_FUSION_ADAPT_STRUCT(
+        ice_script::ast::ExprpreopsExprvalueExprpostops,
+        exprPreopNodes,
+        exprValueNode,
+        exprPostopNodes
+)
 
 BOOST_FUSION_ADAPT_STRUCT(
         ice_script::ast::ExprtermNode,

@@ -12,7 +12,7 @@
 
 namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
-BinaryOperatorFactory process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Mathoperator& mathoperator);
+BinaryOperatorFactory process(Context& context, Llvm& llvm, const asg::Mathoperator& mathoperator);
 
 }}}}
 

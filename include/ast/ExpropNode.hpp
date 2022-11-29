@@ -9,12 +9,14 @@
 #include "ast/CompopNode.hpp"
 #include "ast/LogicopNode.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct ExpropNode : LocationInfo
 {
     //    EXPROP        ::= MATHOP | COMPOP | LOGICOP | BITOP
-    boost::variant<BitopNode, MathopNode, CompopNode, LogicopNode> value;
+    boost::variant<monostate, BitopNode, MathopNode, CompopNode, LogicopNode> value;
 //    std::string value;
 };
 

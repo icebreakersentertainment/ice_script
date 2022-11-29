@@ -65,8 +65,8 @@ public:
     }
 
     template<
-            typename T//,
-//            typename = typename std::enable_if<std::is_base_of<ast::LocationInfo, T>::value, T>::type
+            typename T,
+            typename std::enable_if<std::is_base_of<ast::LocationInfo, T>::value, bool>::type = true
     >
     void printBasic(const T& node, bool newline = true) const
     {
@@ -74,7 +74,7 @@ public:
 
         if (printLocationInfo_)
         {
-//            os_ << "Line: " << node.line << " Column: " << node.column << " Length: " << node.length << " ";
+            os_ << "Line: " << node.line << " Column: " << node.column << " Length: " << node.length << " ";
         }
 
         os_ << typeid(node).name();
@@ -82,23 +82,23 @@ public:
         if (newline) os_ << std::endl;
     }
 
-//    template<
-//            typename T,
-//            typename = typename std::enable_if<!std::is_base_of<ast::LocationInfo, T>::value, T>::type
-//    >
-//    void printBasic(const T& node, bool newline = true) const
-//    {
-//        tab(indent_);
-//
-////        if (printLocationInfo_)
-////        {
-////            os_ << "Line: " << node.line << " Column: " << node.column << " Length: " << node.length << " ";
-////        }
-//
-//        os_ << typeid(node).name();
-//
-//        if (newline) os_ << std::endl;
-//    }
+    template<
+            typename T,
+            typename std::enable_if<!std::is_base_of<ast::LocationInfo, T>::value, bool>::type = true
+    >
+    void printBasic(const T& node, bool newline = true) const
+    {
+        tab(indent_);
+
+//        if (printLocationInfo_)
+//        {
+//            os_ << "Line: " << node.line << " Column: " << node.column << " Length: " << node.length << " ";
+//        }
+
+        os_ << typeid(node).name();
+
+        if (newline) os_ << std::endl;
+    }
 
     template<
             typename ... Ts//,

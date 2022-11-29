@@ -19,13 +19,15 @@ using ascii::char_;
 using ascii::space;
 using ascii::space_type;
 
+ParamlistRuleType _paramlistRule = paramlistRule.alias();
+
 // FUNC          ::= {'shared' | 'external'} ['private' | 'protected'] [((TYPE ['&']) | '~')] IDENTIFIER PARAMLIST ['const'] FUNCATTR (';' | STATBLOCK)
 FuncRuleType funcRule = qi::eps >> *(string("shared") | string("external"))
             >> -(string("private") | string("protected"))
             >> -(
-                   as<ast::TupleTypeOptionalStringType>()[(typeRule.alias() >> -string("&"))] | as_string[string("~")]
+                   as<ast::TupleTypeOptionalStringType>()[((typeRule.alias() >> !_paramlistRule) >> -string("&"))] | as_string[string("~")]
             )
-            >> identifierRule.alias() >> paramlistRule.alias() >> -string("const") >> funcattrRule.alias()
+            >> identifierRule.alias() >> _paramlistRule >> matches["const"] >> funcattrRule.alias()
             >> (lit(";") | statblockRule.alias());
 
 }}}

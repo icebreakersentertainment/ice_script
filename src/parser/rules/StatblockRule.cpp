@@ -2,6 +2,8 @@
 #include "parser/rules/VarRule.hpp"
 #include "parser/rules/StatementRule.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace parser { namespace rules {
 
 namespace qi = boost::spirit::qi;
@@ -19,6 +21,6 @@ using ascii::space_type;
 static StatementRuleType _statementRule = statementRule.alias();
 
 // STATBLOCK     ::= '{' {VAR | STATEMENT} '}'
-StatblockRuleType statblockRule = qi::eps >> lit("{") >> *(_statementRule | varRule.alias()) >> lit("}");
+StatblockRuleType statblockRule = qi::eps >> lit("{") >> as<std::vector<boost::variant<monostate, ast::VarNode, ast::StatementNode>>>()[*(varRule.alias() | _statementRule)] >> lit("}");
 
 }}}

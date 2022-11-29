@@ -3,15 +3,19 @@
 
 #include <string>
 
+#include "asg/LocationInfo.hpp"
+
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace asg {
 
 struct Variable;
 struct Statement;
 
 // STATBLOCK     ::= '{' {VAR | STATEMENT} '}'
-struct Statblock
+struct Statblock : LocationInfo
 {
-    std::vector<boost::variant<boost::recursive_wrapper<Variable>, boost::recursive_wrapper<Statement>>> values;
+    std::vector<boost::variant<monostate, boost::recursive_wrapper<Variable>, boost::recursive_wrapper<Statement>>> values;
 };
 
 }}

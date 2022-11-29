@@ -14,6 +14,8 @@
 
 #include "ast/LocationInfo.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct TypeNode;
@@ -30,18 +32,18 @@ struct FuncNode : LocationInfo
     boost::optional<std::string> privateOrProtected;
     boost::optional<
             boost::variant<
-//                    boost::tuple<boost::recursive_wrapper<TypeNode>, boost::optional<std::string>>,
+                    monostate,
                     TupleTypeOptionalStringType,
                     std::string
             >
     > value1;
     boost::recursive_wrapper<IdentifierNode> identifierNode;
     boost::recursive_wrapper<ParamlistNode> paramlistNode;
-    boost::optional<std::string> isConst;
+    bool constant;
     boost::recursive_wrapper<FuncattrNode> funcattrNode;
     boost::optional<boost::recursive_wrapper<StatblockNode>> optionalStatblockNode;
 
-    std::string value;
+//     std::string value;
 };
 
 }}
@@ -59,7 +61,7 @@ BOOST_FUSION_ADAPT_STRUCT(
         value1,
         identifierNode,
         paramlistNode,
-        isConst,
+        constant,
         funcattrNode,
         optionalStatblockNode
 //        value

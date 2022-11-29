@@ -22,7 +22,7 @@ public:
      *
      * You may call this method multiple times to mount several base directories.
      *
-     * Note that once you mount a directory, any file that is looked for that does not have its base path within a mounted directory will fail to find the file.
+     * Note that once you mount a directory, any file that is looked for that does not have its base path within a mounted directory will fail to findByKey the file.
      * @param baseDir
      */
 	void mountBaseDirectory(const std::string& baseDir);

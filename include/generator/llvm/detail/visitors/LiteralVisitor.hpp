@@ -1,11 +1,13 @@
 #ifndef ICE_SCRIPT_GENERATOR_LITERALVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_LITERALVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/NumberGenerator.hpp"
+#include "generator/llvm/detail/generators/StringGenerator.hpp"
+#include "generator/llvm/detail/generators/BitsGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,9 +24,21 @@ public:
 
     using AbstractVisitor::operator();
 
-    LiteralVisitorResultType operator()(const asg::Number& number);
-    LiteralVisitorResultType operator()(const asg::String& string);
-    LiteralVisitorResultType operator()(const asg::Bits& bits);
+    LiteralVisitorResultType operator()(const asg::Number& number)
+    {
+        return process(*context_, *llvm_, number);
+    }
+
+    LiteralVisitorResultType operator()(const asg::String& string)
+    {
+        return process(*context_, *llvm_, string);
+    }
+
+    LiteralVisitorResultType operator()(const asg::Bits& bits)
+    {
+        return process(*context_, *llvm_, bits);
+    }
+
 };
 
 }}}}

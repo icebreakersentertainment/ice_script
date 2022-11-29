@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_ENUMERATIONVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_ENUMERATIONVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/IdentifierGenerator.hpp"
+#include "generator/llvm/detail/generators/ExpressionGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        EnumerationVisitorResultType operator()(const asg::Identifier& identifier);
-    EnumerationVisitorResultType operator()(const asg::Expression& expression);
+    EnumerationVisitorResultType operator()(const asg::Identifier& identifier)
+    {
+        return process(*context_, *llvm_, identifier);
+    }
+
+    EnumerationVisitorResultType operator()(const asg::Expression& expression)
+    {
+        return process(*context_, *llvm_, expression);
+    }
+
 };
 
 }}}}

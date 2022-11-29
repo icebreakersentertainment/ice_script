@@ -4,14 +4,19 @@
 #include <string>
 
 #include "asg/Assign.hpp"
+#include "asg/LocationInfo.hpp"
 
 namespace ice_script { namespace asg {
 
 // EXPRSTAT      ::= [ASSIGN] ';'
-
-struct Expressionstat
+struct Expressionstat : LocationInfo
 {
-    std::string value;
+    Expressionstat() = default;
+    
+    Expressionstat(Assign assign) : assign(std::move(assign))
+    {}
+    
+    boost::optional<Assign> assign;
 };
 
 }}

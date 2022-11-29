@@ -15,7 +15,7 @@
 
 #include "logger/ILogger.hpp"
 
-struct monostate {};
+#include "detail/monostate.hpp"
 
 namespace ice_script { namespace generator { namespace llvm {
 
@@ -65,7 +65,7 @@ public:
 
     LlvmIrVisitorReturnType operator()(const asg::Asg& asg) const;
     LlvmIrVisitorReturnType operator()(const asg::Script& script) const;
-//    LlvmIrVisitorReturnType operator()(const asg::Class& classData) const;
+    LlvmIrVisitorReturnType operator()(const asg::Class& classData) const;
     LlvmIrVisitorReturnType operator()(const asg::Typedefinition& typedefinition) const;
 //    LlvmIrVisitorReturnType operator()(const asg::Namespace& namespaceDefinition) const;
     LlvmIrVisitorReturnType operator()(const asg::Function& function) const;
@@ -80,7 +80,7 @@ public:
     LlvmIrVisitorReturnType operator()(const asg::Statblock& statblock) const;
     LlvmIrVisitorReturnType operator()(const asg::Parameterlist& parameterlist) const;
     LlvmIrVisitorReturnType operator()(const asg::Typemodifier& typemodifier) const;
-    LlvmIrVisitorReturnType operator()(const asg::Type& type) const;
+    LlvmIrVisitorReturnType operator()(const Type& type) const;
     LlvmIrVisitorReturnType operator()(const asg::Initlist& initlist) const;
     LlvmIrVisitorReturnType operator()(const asg::Scoperatore& scoperatore) const;
     LlvmIrVisitorReturnType operator()(const asg::Datatype& datatype) const;
@@ -129,7 +129,7 @@ private:
     std::shared_ptr<Llvm> llvm_;
 
     std::vector<::llvm::Type*> createParameterTypeList(const std::vector<asg::Variable>& parameters) const;
-    ::llvm::Type* toLlvmType(const asg::Type& type) const;
+    ::llvm::Type* toLlvmType(const Type& type) const;
 
 //    std::vector<::llvm::Type*> createParameterTypeList(const ast::ParamlistNode& node) const;
 

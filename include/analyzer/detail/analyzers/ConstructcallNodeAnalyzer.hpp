@@ -5,13 +5,13 @@
 
 #include "asg/Constructcall.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Constructcall process(logger::ILogger& logger, Context& context, const ast::ConstructcallNode& node);
+asg::Constructcall process(Context& context, const ast::ConstructcallNode& node);
 
 }}}
 

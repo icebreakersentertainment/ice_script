@@ -5,13 +5,13 @@
 
 #include "asg/Variableaccess.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Variableaccess process(logger::ILogger& logger, Context& context, const ast::VaraccessNode& node);
+asg::Variableaccess process(Context& context, const ast::VaraccessNode& node);
 
 }}}
 

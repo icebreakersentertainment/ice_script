@@ -7,6 +7,8 @@
 
 #include "ast/VoidNode.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct ConstructcallNode;
@@ -17,19 +19,22 @@ struct LiteralNode;
 struct AssignNode;
 struct LambdaNode;
 
+using ExprvalueNodeValueType = boost::variant<
+        monostate,
+        VoidNode,
+        boost::recursive_wrapper<ConstructcallNode>,
+        boost::recursive_wrapper<FunccallNode>,
+        boost::recursive_wrapper<VaraccessNode>,
+        boost::recursive_wrapper<CastNode>,
+        boost::recursive_wrapper<LiteralNode>,
+        boost::recursive_wrapper<AssignNode>,
+        boost::recursive_wrapper<LambdaNode>
+>;
+
 struct ExprvalueNode : LocationInfo
 {
     // (string("void") | constructcallRule | funccallRule | varaccessRule | castRule | literalRule | (lit("(") >> assignRule >> lit(")")) | lambdaRule);
-    boost::variant<
-            VoidNode,
-            boost::recursive_wrapper<ConstructcallNode>,
-            boost::recursive_wrapper<FunccallNode>,
-            boost::recursive_wrapper<VaraccessNode>,
-            boost::recursive_wrapper<CastNode>,
-            boost::recursive_wrapper<LiteralNode>,
-            boost::recursive_wrapper<AssignNode>,
-            boost::recursive_wrapper<LambdaNode>
-    > value;
+    ExprvalueNodeValueType value;
 //    std::string value;
 };
 

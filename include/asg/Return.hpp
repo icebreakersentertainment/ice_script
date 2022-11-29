@@ -4,11 +4,12 @@
 #include <string>
 
 #include "asg/Assign.hpp"
+#include "asg/LocationInfo.hpp"
 
 namespace ice_script { namespace asg {
 
 // RETURN        ::= 'return' [ASSIGN] ';'
-struct Return
+struct Return : LocationInfo
 {
     boost::optional<Assign> assignment;
 };

@@ -5,13 +5,13 @@
 
 #include "asg/Assign.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Assign process(logger::ILogger& logger, Context& context, const ast::AssignNode& node);
+asg::Assign process(Context& context, const ast::AssignNode& node);
 
 }}}
 

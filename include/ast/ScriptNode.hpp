@@ -5,6 +5,8 @@
 
 #include "ast/LocationInfo.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct ImportNode;
@@ -20,6 +22,7 @@ struct FuncNode;
 struct NamespaceNode;
 
 using Node = boost::variant<
+        monostate,
         boost::recursive_wrapper<ImportNode>,
         boost::recursive_wrapper<EnumNode>,
         boost::recursive_wrapper<TypedefNode>,

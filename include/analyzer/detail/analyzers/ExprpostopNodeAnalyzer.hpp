@@ -5,13 +5,13 @@
 
 #include "asg/Expressionpostoperator.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Expressionpostoperator process(logger::ILogger& logger, Context& context, const ast::ExprpostopNode& node);
+asg::Expressionpostoperator process(Context& context, const ast::ExprpostopNode& node);
 
 }}}
 

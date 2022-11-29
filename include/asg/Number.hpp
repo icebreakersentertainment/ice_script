@@ -13,10 +13,14 @@
 #include "asg/UInteger64.hpp"
 #include "asg/Float.hpp"
 #include "asg/Double.hpp"
+#include "asg/LocationInfo.hpp"
+
+#include "detail/monostate.hpp"
 
 namespace ice_script { namespace asg {
 
 using NumberType = boost::variant<
+        monostate,
         Integer8,
         Integer16,
         Integer32,
@@ -32,9 +36,15 @@ using NumberType = boost::variant<
 >;
 
 // NUMBER        ::= single token:  includes integers and real numbers, same as C++
-struct Number
+struct Number : LocationInfo
 {
-    std::shared_ptr<Type> type;
+    Number() = default;
+    Number(NumberType value) : value(std::move(value))
+    {
+
+    }
+
+//    std::shared_ptr<Type> type;
     NumberType value;
 };
 

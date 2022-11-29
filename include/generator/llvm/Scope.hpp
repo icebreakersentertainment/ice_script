@@ -21,7 +21,10 @@
 #include "exceptions/DuplicateFunctionException.hpp"
 #include "exceptions/DuplicateArgumentException.hpp"
 #include "exceptions/DuplicateAllocaInstException.hpp"
+#include "exceptions/DuplicateValueException.hpp"
 #include "exceptions/AllocaInstNotFoundException.hpp"
+#include "exceptions/ValueNotFoundException.hpp"
+#include "exceptions/FunctionNotFoundException.hpp"
 #include "exceptions/DuplicateBasicBlockException.hpp"
 
 namespace ice_script { namespace generator { namespace llvm {
@@ -69,6 +72,17 @@ public:
         functions_[name] = &function;
     }
 
+    ::llvm::Function& getFunction(const std::string& name)
+    {
+        const auto it = functions_.find(name);
+
+        if (it != functions_.end()) return *it->second;
+
+        if (!parent_) throw FunctionNotFoundException(detail::format("Function '%s' not found", name));
+
+        return parent_->getFunction(name);
+    }
+
     void add(const std::string& name, ::llvm::Argument& argument)
     {
         const auto it = arguments_.find(name);
@@ -80,6 +94,15 @@ public:
         arguments_[name] = &argument;
     }
 
+    ::llvm::Argument* findArgument(const std::string& name)
+    {
+        const auto it = arguments_.find(name);
+
+        if (it != arguments_.end()) return it->second;
+
+        return parent_ ? parent_->findArgument(name) : nullptr;
+    }
+
     void add(const std::string& name, ::llvm::AllocaInst& allocaInst)
     {
         const auto it = allocaInsts_.find(name);
@@ -87,19 +110,61 @@ public:
         {
             throw DuplicateAllocaInstException(detail::format("AllocaInst '%s' already exists", name));
         }
+        
+        add(name, *::llvm::dyn_cast<::llvm::Value>(&allocaInst));
 
         allocaInsts_[name] = &allocaInst;
+    }
+    
+    ::llvm::AllocaInst* findAllocaInst(const std::string& name)
+    {
+        const auto it = allocaInsts_.find(name);
+
+        if (it != allocaInsts_.end()) return it->second;
+
+        return parent_ ? parent_->findAllocaInst(name) : nullptr;
     }
 
     ::llvm::AllocaInst& getAllocaInst(const std::string& name)
     {
         const auto it = allocaInsts_.find(name);
-        if (it == allocaInsts_.end())
+
+        if (it != allocaInsts_.end()) return *it->second;
+
+        if (!parent_) throw AllocaInstNotFoundException(detail::format("AllocaInst '%s' not found", name));
+
+        return parent_->getAllocaInst(name);
+    }
+    
+    void add(const std::string& name, ::llvm::Value& value)
+    {
+        const auto it = values_.find(name);
+        if (it != values_.end())
         {
-            throw AllocaInstNotFoundException(detail::format("AllocaInst '%s' not found", name));
+            throw DuplicateValueException(detail::format("Value '%s' already exists", name));
         }
 
-        return *it->second;
+        values_[name] = &value;
+    }
+    
+    ::llvm::Value* findValue(const std::string& name)
+    {
+        const auto it = values_.find(name);
+
+        if (it != values_.end()) return it->second;
+
+        return parent_ ? parent_->findValue(name) : nullptr;
+    }
+
+    ::llvm::Value& getValue(const std::string& name)
+    {
+        const auto it = values_.find(name);
+
+        if (it != values_.end()) return *it->second;
+
+        if (!parent_) throw ValueNotFoundException(detail::format("Value '%s' not found", name));
+
+        return parent_->getValue(name);
     }
 
     void add(const std::string& name, ::llvm::BasicBlock& basicBlock)
@@ -152,6 +217,7 @@ private:
     std::unordered_map<std::string, ::llvm::Function*> functions_;
     std::unordered_map<std::string, ::llvm::Argument*> arguments_;
     std::unordered_map<std::string, ::llvm::AllocaInst*> allocaInsts_;
+    std::unordered_map<std::string, ::llvm::Value*> values_;
     std::unordered_map<std::string, ::llvm::BasicBlock*> basicBlocks_;
 };
 

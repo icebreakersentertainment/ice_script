@@ -1,11 +1,21 @@
 #ifndef ICE_SCRIPT_GENERATOR_STATEMENTVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_STATEMENTVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/IfGenerator.hpp"
+#include "generator/llvm/detail/generators/ForGenerator.hpp"
+#include "generator/llvm/detail/generators/WhileGenerator.hpp"
+#include "generator/llvm/detail/generators/ReturnGenerator.hpp"
+#include "generator/llvm/detail/generators/StatblockGenerator.hpp"
+#include "generator/llvm/detail/generators/BreakGenerator.hpp"
+#include "generator/llvm/detail/generators/ContinueGenerator.hpp"
+#include "generator/llvm/detail/generators/DowhileGenerator.hpp"
+#include "generator/llvm/detail/generators/SwitchGenerator.hpp"
+#include "generator/llvm/detail/generators/ExpressionstatGenerator.hpp"
+#include "generator/llvm/detail/generators/TryGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,17 +32,61 @@ public:
 
     using AbstractVisitor::operator();
 
-        StatementVisitorResultType operator()(const asg::If& ifStatement);
-    StatementVisitorResultType operator()(const asg::For& forLoop);
-    StatementVisitorResultType operator()(const asg::While& whileStatement);
-    StatementVisitorResultType operator()(const asg::Return& returnStatement);
-    StatementVisitorResultType operator()(const asg::Statblock& statblock);
-    StatementVisitorResultType operator()(const asg::Break& breakStatement);
-    StatementVisitorResultType operator()(const asg::Continue& continueStatement);
-    StatementVisitorResultType operator()(const asg::Dowhile& dowhile);
-    StatementVisitorResultType operator()(const asg::Switch& switchStatement);
-    StatementVisitorResultType operator()(const asg::Expressionstat& expressionstat);
-    StatementVisitorResultType operator()(const asg::Try& tryStatement);
+    StatementVisitorResultType operator()(const asg::If& ifStatement)
+    {
+        return process(*context_, *llvm_, ifStatement);
+    }
+
+    StatementVisitorResultType operator()(const asg::For& forLoop)
+    {
+        return process(*context_, *llvm_, forLoop);
+    }
+
+    StatementVisitorResultType operator()(const asg::While& whileLoop)
+    {
+        return process(*context_, *llvm_, whileLoop);
+    }
+
+    StatementVisitorResultType operator()(const asg::Return& returnStatement)
+    {
+        return process(*context_, *llvm_, returnStatement);
+    }
+
+    StatementVisitorResultType operator()(const asg::Statblock& statblock)
+    {
+        return process(*context_, *llvm_, statblock);
+    }
+
+    StatementVisitorResultType operator()(const asg::Break& breakStatement)
+    {
+        return process(*context_, *llvm_, breakStatement);
+    }
+
+    StatementVisitorResultType operator()(const asg::Continue& continueStatement)
+    {
+        return process(*context_, *llvm_, continueStatement);
+    }
+
+    StatementVisitorResultType operator()(const asg::Dowhile& dowhile)
+    {
+        return process(*context_, *llvm_, dowhile);
+    }
+
+    StatementVisitorResultType operator()(const asg::Switch& switchStatement)
+    {
+        return process(*context_, *llvm_, switchStatement);
+    }
+
+    StatementVisitorResultType operator()(const asg::Expressionstat& expressionstat)
+    {
+        return process(*context_, *llvm_, expressionstat);
+    }
+
+    StatementVisitorResultType operator()(const asg::Try& tryStatement)
+    {
+        return process(*context_, *llvm_, tryStatement);
+    }
+
 };
 
 }}}}

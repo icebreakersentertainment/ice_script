@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_TYPEDEFINITIONVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_TYPEDEFINITIONVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/PrimativetypeGenerator.hpp"
+#include "generator/llvm/detail/generators/IdentifierGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        TypedefinitionVisitorResultType operator()(const asg::Primativetype& primativetype);
-    TypedefinitionVisitorResultType operator()(const asg::Identifier& identifier);
+    TypedefinitionVisitorResultType operator()(const asg::Primativetype& primativetype)
+    {
+        return process(*context_, *llvm_, primativetype);
+    }
+
+    TypedefinitionVisitorResultType operator()(const asg::Identifier& identifier)
+    {
+        return process(*context_, *llvm_, identifier);
+    }
+
 };
 
 }}}}

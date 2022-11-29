@@ -5,29 +5,32 @@
 #include "analyzer/detail/analyzers/ExprpostopNodeAnalyzer.hpp"
 
 #include "analyzer/detail/TypeResolver.hpp"
+#include "analyzer/detail/SymbolResolver.hpp"
 
-#include "analyzer/FunctionSymbol.hpp"
+#include "symbol/FunctionSymbol.hpp"
 
-#include "asg/OperatorType.hpp"
+#include "type/OperatorType.hpp"
+
+#include "detail/InsertionOperators.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
 using namespace ice_script::ast;
 using namespace ice_script::asg;
 
-asg::Expressionterm process(logger::ILogger& logger, Context& context, const ast::ExprtermNode& node)
+asg::Expressionterm process(Context& context, const ast::ExprtermNode& node)
 {
-    LOG_DEBUG((&logger), "Analyzing %s", typeid(node).name())
+    LOG_DEBUG((&context.logger()), "Analyzing %s", typeid(node).name())
 
     Scope& scope = context.scope();
 
-    const std::vector<std::shared_ptr<Type>>& expectedTypes = scope.expectedTypes();
+    const auto& expectedTypes = scope.expectedTypes();
 
     Expressionterm expressionterm{};
 
-    if (node.value.type() == typeid(ast::VectorExprpreopExprvalueVectorExprpreopType))
+    if (node.value.type() == typeid(ast::ExprpreopsExprvalueExprpostops))
     {
-        asg::VectorExprpreopExprvalueVectorExprpreopType value{};
+        asg::ExprpreopsExprvalueExprpostops value{};
 
 //        const auto& exprPreopNodes = get<0>(vectorExprpreopExprvalueVectorExprpreop);
 //
@@ -43,46 +46,33 @@ asg::Expressionterm process(logger::ILogger& logger, Context& context, const ast
 
 
 
-        const auto& vectorExprpreopExprvalueVectorExprpreop = boost::get<ast::VectorExprpreopExprvalueVectorExprpreopType>(node.value);
+        const auto& exprpreopsExprvalueExprpostops = boost::get<ast::ExprpreopsExprvalueExprpostops>(node.value);
 
-        const auto& exprPreopNodes = boost::get<0>(vectorExprpreopExprvalueVectorExprpreop);
-
-        for (const auto& exprPreopNode : exprPreopNodes)
+        for (const auto& exprPreopNode : exprpreopsExprvalueExprpostops.exprPreopNodes)
         {
-            boost::get<0>(value).push_back(process(logger, context, exprPreopNode.get()));
+            value.expressionPreoperators.push_back(process(context, exprPreopNode.get()));
         }
 
 //        auto expressionvalue = boost::get<Expressionvalue>(operator()(boost::get<1>(vectorExprpreopExprvalueVectorExprpreop)));
-        const auto& exprvalueNode = boost::get<1>(vectorExprpreopExprvalueVectorExprpreop);
 
-        auto expressionvalue = process(logger, context, exprvalueNode.get());
+        value.expressionValue = process(context, exprpreopsExprvalueExprpostops.exprValueNode.get());
 
-        const auto& exprPostopNodes = boost::get<2>(vectorExprpreopExprvalueVectorExprpreop);
+        context.scope().setValueSymbol(resolveSymbol(context, value.expressionValue));
+        context.scope().setValueType(resolveType(context, value.expressionValue));
 
-        for (const auto& exprPostopNode : exprPostopNodes)
+        for (const auto& exprPostopNode : exprpreopsExprvalueExprpostops.exprPostopNodes)
         {
-            boost::get<2>(value).push_back(process(logger, context, exprPostopNode.get()));
+            value.expressionPostoperators.push_back(process(context, exprPostopNode.get()));
         }
 
-        boost::get<1>(value) = expressionvalue;
+        const auto resolvedType = resolveType(context, value);
 
-        std::shared_ptr<Type> resolvedType{};
-
-        if (!boost::get<2>(value).empty())
-        {
-            resolvedType = resolveType(logger, context, boost::get<2>(value).back().get());
-        }
-        else
-        {
-            resolvedType = resolveType(logger, context, expressionvalue);
-        }
-
-        if (std::find(expectedTypes.begin(), expectedTypes.end(), resolvedType) == expectedTypes.end())
+        if (!expectedTypes.empty() && std::find(expectedTypes.begin(), expectedTypes.end(), resolvedType) == expectedTypes.end())
         {
             // type is not one of the expected types, so see if there is an implicit conversion operator
             std::shared_ptr<OperatorType> implicitConversionOperator{};
 
-            const auto& operators = resolvedType->findOperators(OperatorTypeId::IMPLICIT_CONVERSION);
+            const auto& operators = resolvedType->operators().find(OperatorTypeId::IMPLICIT_CONVERSION);
 
             for (const auto& _operator : operators)
             {
@@ -93,16 +83,21 @@ asg::Expressionterm process(logger::ILogger& logger, Context& context, const ast
                 }
             }
 
-            if (!implicitConversionOperator) throw std::runtime_error("no ic");
+            if (!implicitConversionOperator)
+            {
+                LOG_ERROR((&context.logger()), "Unable to findByKey implicit conversion operator from %s to %s", resolvedType, expectedTypes)
+                throw std::runtime_error("no ic");
+            }
 
             Expressionpostoperator expressionpostoperator{};
             Functioncall functionCall{};
 
-//            functionCall.name = implicitConversionOperator->name();
-//
-//            expressionpostoperator.value = functionCall;
+            functionCall.name = implicitConversionOperator->name();
+            functionCall.type = implicitConversionOperator;
 
-            boost::get<2>(value).push_back(expressionpostoperator);
+            expressionpostoperator.value = functionCall;
+
+            value.expressionPostoperators.push_back(expressionpostoperator);
         }
 
         expressionterm.value = value;

@@ -8,6 +8,8 @@
 #include "ast/BoolNode.hpp"
 #include "ast/NullNode.hpp"
 
+#include "detail/monostate.hpp"
+
 namespace ice_script { namespace ast {
 
 struct NumberNode;
@@ -16,7 +18,7 @@ struct BitsNode;
 
 struct LiteralNode : LocationInfo
 {
-    boost::variant<boost::recursive_wrapper<NumberNode>, StringNode, boost::recursive_wrapper<ast::BitsNode>, BoolNode, NullNode> value;
+    boost::variant<monostate, boost::recursive_wrapper<NumberNode>, StringNode, boost::recursive_wrapper<ast::BitsNode>, BoolNode, NullNode> value;
 //    std::string value;
 };
 

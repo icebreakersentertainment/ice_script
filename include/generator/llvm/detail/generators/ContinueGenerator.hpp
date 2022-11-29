@@ -10,7 +10,7 @@
 
 namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Continue& continueStatement);
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::Continue& continueStatement);
 
 }}}}
 

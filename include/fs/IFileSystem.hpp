@@ -1,5 +1,5 @@
-#ifndef IFILESYSTEM_H_
-#define IFILESYSTEM_H_
+#ifndef ICE_SCRIPT_FS_IFILESYSTEM_HPP
+#define ICE_SCRIPT_FS_IFILESYSTEM_HPP
 
 #include <string>
 #include <vector>
@@ -42,4 +42,4 @@ public:
 }
 }
 
-#endif /* IFILESYSTEM_H_ */
+#endif /* ICE_SCRIPT_FS_IFILESYSTEM_HPP */

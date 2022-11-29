@@ -1,11 +1,11 @@
 #ifndef ICE_SCRIPT_GENERATOR_MIXINVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_MIXINVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/ClassGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,7 +22,11 @@ public:
 
     using AbstractVisitor::operator();
 
-        MixinVisitorResultType operator()(const asg::Class& classData);
+    MixinVisitorResultType operator()(const asg::Class& class)
+    {
+        return process(*context_, *llvm_, class);
+    }
+
 };
 
 }}}}

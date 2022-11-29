@@ -5,13 +5,13 @@
 
 #include "asg/Interfacemethod.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Interfacemethod process(logger::ILogger& logger, Context& context, const ast::IntfmthdNode& node);
+asg::Interfacemethod process(Context& context, const ast::IntfmthdNode& node);
 
 }}}
 

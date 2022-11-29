@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_ARGLISTVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_ARGLISTVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/IdentifierGenerator.hpp"
+#include "generator/llvm/detail/generators/AssignGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        ArglistVisitorResultType operator()(const asg::Identifier& identifier);
-    ArglistVisitorResultType operator()(const asg::Assign& assign);
+    ArglistVisitorResultType operator()(const asg::Identifier& identifier)
+    {
+        return process(*context_, *llvm_, identifier);
+    }
+
+    ArglistVisitorResultType operator()(const asg::Assign& assign)
+    {
+        return process(*context_, *llvm_, assign);
+    }
+
 };
 
 }}}}

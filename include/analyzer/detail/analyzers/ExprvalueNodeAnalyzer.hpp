@@ -5,13 +5,13 @@
 
 #include "asg/Expressionvalue.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Expressionvalue process(logger::ILogger& logger, Context& context, const ast::ExprvalueNode& node);
+asg::Expressionvalue process(Context& context, const ast::ExprvalueNode& node);
 
 }}}
 

@@ -15,19 +15,35 @@
 #include "generator/llvm/Llvm.hpp"
 #include "generator/llvm/Context.hpp"
 
+#include "generator/llvm/detail/GenerateTypes.hpp"
+#include "generator/llvm/detail/GenerateSymbols.hpp"
+#include "generator/llvm/detail/GenerateDefaultDefinitions.hpp"
+
+#include "asg/AsgPrinter.hpp"
+
 namespace ice_script { namespace generator { namespace llvm {
 
 using namespace ::llvm;
+using namespace ice_script::generator::llvm::detail;
 
 LlvmIr::LlvmIr(logger::ILogger& logger) : logger_(&logger)
 {
 
 }
 
-std::string LlvmIr::generate(const asg::Asg& asg)
+std::string LlvmIr::generate(const TypeTable& typeTable, const SymbolTable& symbolTable, const asg::Asg& asg)
 {
-    std::shared_ptr<Context> context = std::make_shared<Context>();
+    std::shared_ptr<Context> context = std::make_shared<Context>(*logger_);
+    context->setTypeTable(typeTable);
+    context->setSymbolTable(symbolTable);
+
     std::shared_ptr<Llvm> llvm = std::make_shared<Llvm>();
+
+    asg::AsgPrinter{std::cout}(asg);
+
+    generateTypes(*context, *llvm);
+    generateSymbols(*context, *llvm);
+    generateDefaultDefinitions(*context, *llvm);
 
     LlvmIrVisitor visitor{*logger_, context, llvm};
 

@@ -4,7 +4,7 @@
 #include <string>
 
 #include "asg/Identifier.hpp"
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 
 namespace ice_script { namespace asg {
 

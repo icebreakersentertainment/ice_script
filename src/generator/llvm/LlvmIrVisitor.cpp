@@ -105,9 +105,9 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const std::string& string) con
     return {};
 }
 
-std::vector<Type*> LlvmIrVisitor::createParameterTypeList(const std::vector<asg::Variable>& parameters) const
+std::vector<::llvm::Type*> LlvmIrVisitor::createParameterTypeList(const std::vector<asg::Variable>& parameters) const
 {
-    std::vector<Type*> parameterList{};
+    std::vector<::llvm::Type*> parameterList{};
 
     for (const auto& parameter : parameters)
     {
@@ -127,7 +127,7 @@ std::vector<Type*> LlvmIrVisitor::createParameterTypeList(const std::vector<asg:
     return parameterList;
 }
 
-::llvm::Type* LlvmIrVisitor::toLlvmType(const asg::Type& type) const
+::llvm::Type* LlvmIrVisitor::toLlvmType(const Type& type) const
 {
     auto paramType = ::llvm::Type::getInt64Ty(llvm_->context());
 
@@ -154,12 +154,12 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Script& script) con
     return {};
 }
 
-//LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Class& classData) const
-//{
-//    LOG_DEBUG(logger_, "Processing %s", typeid(classData).name())
-//
-//    Scope& scope = context_->scope();
-//}
+LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Class& classData) const
+{
+   LOG_DEBUG(logger_, "Processing %s", typeid(classData).name())
+
+   return process(*context_, *llvm_, classData);
+}
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Typedefinition& typedefinition) const
 {
@@ -179,7 +179,7 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Typedefinition& typ
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Function& function) const
 {
-    return process(*logger_, *context_, *llvm_, function);
+    return process(*context_, *llvm_, function);
 }
 
 //LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Interface& interfaceData) const
@@ -191,7 +191,7 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Function& function)
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Variable& variable) const
 {
-    return process(*logger_, *context_, *llvm_, variable);
+    return process(*context_, *llvm_, variable);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Import& import) const
@@ -275,7 +275,7 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Typemodifier& typem
     return {};
 }
 
-LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Type& type) const
+LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const Type& type) const
 {
     LOG_DEBUG(logger_, "Processing %s", typeid(type).name())
 
@@ -331,7 +331,7 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Functionattribute& 
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Statement& statement) const
 {
-    return process(*logger_, *context_, *llvm_, statement);
+    return process(*context_, *llvm_, statement);
 }
 
 //LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Switch& switchStatement) const
@@ -403,7 +403,7 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Expressionstat& exp
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Return& ret) const
 {
-    return process(*logger_, *context_, *llvm_, ret);
+    return process(*context_, *llvm_, ret);
 }
 
 //LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Case& caseStatement) const
@@ -415,17 +415,17 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Return& ret) const
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Expression& expression) const
 {
-    return process(*logger_, *context_, *llvm_, expression);
+    return process(*context_, *llvm_, expression);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Expressionterm& expressionterm) const
 {
-    return process(*logger_, *context_, *llvm_, expressionterm);
+    return process(*context_, *llvm_, expressionterm);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Expressionvalue& expressionvalue) const
 {
-    return process(*logger_, *context_, *llvm_, expressionvalue);
+    return process(*context_, *llvm_, expressionvalue);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Constructcall& constructcall) const
@@ -475,7 +475,7 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Lambda& lambda) con
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Literal& literal) const
 {
-    return process(*logger_, *context_, *llvm_, literal);
+    return process(*context_, *llvm_, literal);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Functioncall& functioncall) const
@@ -489,7 +489,7 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Functioncall& funct
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Variableaccess& variableaccess) const
 {
-    return process(*logger_, *context_, *llvm_, variableaccess);
+    return process(*context_, *llvm_, variableaccess);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Arglist& arglist) const
@@ -503,12 +503,12 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Arglist& arglist) c
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Assign& assign) const
 {
-    return process(*logger_, *context_, *llvm_, assign);
+    return process(*context_, *llvm_, assign);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Condition& condition) const
 {
-    return process(*logger_, *context_, *llvm_, condition);
+    return process(*context_, *llvm_, condition);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Expressionoperatorerty& expressionoperatorerty) const
@@ -570,7 +570,7 @@ LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Identifier& identif
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::Number& number) const
 {
-    return process(*logger_, *context_, *llvm_, number);
+    return process(*context_, *llvm_, number);
 }
 
 LlvmIrVisitorReturnType LlvmIrVisitor::operator()(const asg::String& string) const

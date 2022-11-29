@@ -1,197 +1,135 @@
 #include "analyzer/detail/analyzers/FuncNodeAnalyzer.hpp"
 
 #include "analyzer/detail/analyzers/StatblockNodeAnalyzer.hpp"
+#include "analyzer/detail/analyzers/ExprNodeAnalyzer.hpp"
 
 #include "analyzer/detail/visitors/AbstractVisitor.hpp"
 
 #include "analyzer/detail/TypeResolver.hpp"
+#include "analyzer/detail/TypeKeyResolver.hpp"
+#include "analyzer/detail/SymbolKeyResolver.hpp"
+#include "analyzer/detail/SetLocationInfo.hpp"
+#include <memory>
 
 namespace ice_script { namespace analyzer { namespace detail {
 
 using namespace ice_script::ast;
 using namespace ice_script::asg;
 
-std::shared_ptr<FunctionType> createFunctionType(logger::ILogger& logger, Context& context, const FuncNode& node)
+inline std::shared_ptr<Symbol> createSymbol(Context& context, const TypeTypeModIdentifierExpr& typeTypeModIdentifierExpr)
 {
-    std::shared_ptr<FunctionType> functionType{};
+    const auto typeKey = resolveTypeKey(context, typeTypeModIdentifierExpr.typeNode.get());
+    
+    const auto type = context.typeTable().getByKey(typeKey);
+    
+    const auto name = typeTypeModIdentifierExpr.optionalIdentifierNode.get().get().value;
 
-    if (node.value1)
-    {
-        if (node.value1.get().type() == typeid(ast::TupleTypeOptionalStringType))
-        {
-            const auto& tupleTypeOptionalString = boost::get<ast::TupleTypeOptionalStringType>(node.value1.get());
-            const auto& typeNode = tupleTypeOptionalString.get<0>();
+    if (!context.scope().symbolTable().find(name).empty()) throw DuplicateSymbolException();
 
-            std::shared_ptr<Type> type = resolve(logger, context, typeNode.get());
+    auto symbol = std::make_shared<Symbol>(name);
 
-            functionType->setReturnType(type);
-        }
-    }
-
-    return functionType;
-}
-
-class TypeKey
-{
-public:
-    explicit TypeKey(std::string key = "") : value_(std::move(key))
-    {}
-
-    const std::string& value() const
-    {
-        return value_;
-    }
-
-private:
-    std::string value_;
-};
-
-TypeKey toTypeKey(const IdentifierNode& node)
-{
-    return TypeKey(toName(node.value));
-}
-
-TypeKey toTypeKey(const PrimtypeNode& node)
-{
-    return TypeKey(toString(node.primitiveType));
-}
-
-class TypeKeyVisitor : public AbstractVisitor<TypeKeyVisitor, TypeKey>
-{
-    using AbstractVisitor::AbstractVisitor;
-
-    using AbstractVisitor::operator();
-
-    TypeKey operator()(const IdentifierNode& node) { return toTypeKey(node); }
-    TypeKey operator()(const PrimtypeNode& node) { return toTypeKey(node); }
-};
-
-
-
-TypeKey toTypeKey(const DatatypeNode& node)
-{
-    TypeKeyVisitor visitor{};
-    return boost::apply_visitor(visitor, node.value);
-}
-
-TypeKey toTypeKey(const TypeNode& node)
-{
-    return toTypeKey(node.datatypeNode);
-}
-
-TypeKey toTypeKey(const ParamlistNode& node)
-{
-
-}
-
-TypeKey toTypeKey(const FuncNode& node)
-{
-    TypeKey returnTypeKey{};
-
-    if (node.value1)
-    {
-        if (node.value1.get().type() == typeid(ast::TupleTypeOptionalStringType))
-        {
-            const auto& tupleTypeOptionalString = boost::get<ast::TupleTypeOptionalStringType>(node.value1.get());
-            const auto& typeNode = tupleTypeOptionalString.get<0>();
-
-            returnTypeKey = toTypeKey(typeNode.get());
-        }
-    }
-
-    const auto name = toName(node.identifierNode.get().value);
-
-    TypeKey paramlistTypeKey = toTypeKey(node.paramlistNode.get());
-
-    return returnTypeKey + TypeKey(name) + paramlistTypeKey;
-}
-
-std::shared_ptr<FunctionSymbol> createFunctionSymbol(logger::ILogger& logger, Context& context, const FuncNode& node)
-{
-    std::shared_ptr<FunctionType> functionType{};
-
-    const auto symbolKey = toSymbolKey(node);
-
-    if (scope.symbolTable().findFunction(symbolKey)) throw DuplicateSymbolException();
-
-    //    const auto name = toName(node.identifierNode.get().value);
-    const auto typeKey = toTypeKey(node);
-
-    functionType = context.typeTable().findFunction(typeKey);
-
-    if (!functionType)
-    {
-        functionType = createFunctionType(logger, context, node);
-        context.typeTable().add(functionType);
-    }
-
-    std::shared_ptr<FunctionSymbol> symbol{};
-
-    const auto functionName = toName(node.identifierNode.get().value);
-
-    symbol->setName(functionName);
-    symbol->setType(functionType);
+    symbol->setType(type);
+    symbol->setFullyQualifiedScopeName(context.scope().fullyQualifiedName());
 
     return symbol;
 }
 
-asg::Function process(logger::ILogger& logger, Context& context, const ast::FuncNode& node)
+Variable toVariable(Context& context, const TypeTypeModIdentifierExpr& typeTypeModIdentifierExpr)
 {
-    LOG_DEBUG((&logger), "Analyzing %s", typeid(node).name())
+    Variable variable{};
 
+    variable.symbol = createSymbol(context, typeTypeModIdentifierExpr);
+    // variable.type = resolve(context, typeTypeModIdentifierExpr.typeNode.get());
+    variable.name = typeTypeModIdentifierExpr.optionalIdentifierNode.get().get().value;
+
+    if (typeTypeModIdentifierExpr.optionalExprNode)
+    {
+        variable.value = process(context, typeTypeModIdentifierExpr.optionalExprNode.get().get());
+    }
+
+    return variable;
+}
+
+asg::Function process(Context& context, const ast::FuncNode& node)
+{
+    LOG_DEBUG((&context.logger()), "Analyzing %s", typeid(node).name())
+
+    const auto name = node.identifierNode.get().value;
+    
     Scope& scope = context.scope();
+    Scope& currentScope = context.pushScope(name, ScopeType::FUNCTION);
 
     Function function{};
 
-    const auto functionName = toName(node.identifierNode.get().value);
+    setLocationInfo(function, node);
 
-    function.name = functionName;
+    function.name = name;
 
-//    std::shared_ptr<FunctionSymbol> symbol = scope.symbolTable().findFunction(functionName);
-//
-////    if (symbol) throw DuplicateSymbolException(symbol);
-//    if (symbol) throw DuplicateSymbolException();
-////    if (symbol) throw RedeclarationException(symbol);
+    const auto symbolKey = resolveSymbolKey(context, node);
+    auto symbol = scope.symbolTable().findFunctionByKey(symbolKey);
 
-//    auto symbol = std::make_shared<FunctionSymbol>(functionName);
-    auto symbol = createFunctionSymbol(logger, context, node);
+    if (!symbol) symbol = context.symbolTable().getFunctionByKey(symbolKey);
 
-//    const auto name = toName(node.identifierNode.get().value);
-    const auto typeKey = toTypeKey(node);
+    function.symbol = symbol;
+    function.returnType = symbol->type()->returnType();
 
-    std::shared_ptr<FunctionType> functionType = context.typeTable().findFunction(typeKey);
-
-    if (!functionType)
+    std::vector<Variable> parameters{};
+    for (const auto& parameter : node.paramlistNode.get().value)
     {
-        functionType = createFunctionType(node);
-        context.typeTable().add(functionType);
+        parameters.push_back(toVariable(context, parameter));
     }
 
-    symbol->setType(functionType);
+    function.parameters = parameters;
 
     scope.symbolTable().add(symbol);
+    currentScope.symbolTable().add(symbol);
 
-    scope.pushExpectedTypes({function.returnType});
+    if (symbol->ownerSymbol())
+    {
+        const auto& classSymbol = scope.symbolTable().getClassByKey(symbol->ownerSymbol()->key());
+        
+        auto thisSymbol = std::make_shared<ClassSymbol>(*classSymbol);
+        
+        auto thisType = context.typeTable().find(thisSymbol->type(), thisSymbol->type()->qualifiers() | (symbol->type()->qualifiers() & TypeQualifier::TypeQualifierFlags::CONSTANT), TypeModifier::POINTER);
+        
+        thisSymbol->setType(thisType);
+        thisSymbol->setName("this");
+        
+        currentScope.symbolTable().add(thisSymbol);
+        
+        for (const auto& memberVariable : classSymbol->memberVariables())
+        {
+            if (!currentScope.symbolTable().findByKey(memberVariable->key())) currentScope.symbolTable().add(memberVariable);
+        }
+        
+        for (const auto& constructor : classSymbol->constructors())
+        {
+            if (!currentScope.symbolTable().findByKey(constructor->key())) currentScope.symbolTable().add(constructor);
+        }
+        
+        for (const auto& function : classSymbol->functions())
+        {
+            if (!currentScope.symbolTable().findByKey(function->key())) currentScope.symbolTable().add(function);
+        }
+    }
+
+    for (const auto& parameter : parameters)
+    {
+        currentScope.symbolTable().add(parameter.symbol);
+    }
+
+    context.pushExpectedReturnTypes({function.returnType});
 
     if (node.optionalStatblockNode)
     {
         const auto& statblockNode = node.optionalStatblockNode.get();
 
-//        Statblock statblock = boost::get<asg::Statblock>(operator()(statblockNode));
-        Statblock statblock = process(logger, context, statblockNode.get());
-
-        function.body = statblock;
+        function.body = process(context, statblockNode.get());
     }
 
-//    variable.type = &resolve(node.typeNode.get());
-//    variable.name = toName(node.identifierNode.get().value);
-//
-//    if (node.initListOrExprOrArgList)
-//    {
-//        variable.value = resolve(node.initListOrExprOrArgList.get());
-//    }
+    context.popExpectedReturnTypes();
 
-    scope.popExpectedTypes();
+    context.popScope();
 
     return function;
 }

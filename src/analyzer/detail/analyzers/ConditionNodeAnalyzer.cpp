@@ -7,9 +7,9 @@ namespace ice_script { namespace analyzer { namespace detail {
 using namespace ice_script::ast;
 using namespace ice_script::asg;
 
-asg::Condition process(logger::ILogger& logger, Context& context, const ast::ConditionNode& node)
+asg::Condition process(Context& context, const ast::ConditionNode& node)
 {
-    LOG_DEBUG((&logger), "Analyzing %s", typeid(node).name())
+    LOG_DEBUG((&context.logger()), "Analyzing %s", typeid(node).name())
 
     Scope& scope = context.scope();
 
@@ -20,12 +20,12 @@ asg::Condition process(logger::ILogger& logger, Context& context, const ast::Con
 
     Condition condition{};
 
-    condition.expression = process(logger, context, node.exprNode.get());
+    condition.expression = process(context, node.exprNode.get());
 
 //    if (node.assignNode)
 //    {
-//        Assign assign1 = process(logger, context, boost::get<0>(node.assignNode.get()).get());
-//        Assign assign2 = process(logger, context, boost::get<1>(node.assignNode.get()).get());
+//        Assign assign1 = process(context, boost::get<0>(node.assignNode.get()).get());
+//        Assign assign2 = process(context, boost::get<1>(node.assignNode.get()).get());
 //
 //        condition.assign = {{assign1, assign2}};
 //    }

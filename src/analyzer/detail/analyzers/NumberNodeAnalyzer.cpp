@@ -2,7 +2,7 @@
 
 #include "analyzer/detail/analyzers/NumberNodeAnalyzer.hpp"
 
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
@@ -12,7 +12,7 @@ using namespace ice_script::asg;
 namespace
 {
 
-size_t getSize(logger::ILogger& logger, Context& context, const std::string& value)
+size_t getSize(Context& context, const std::string& value)
 {
     const bool isNegative = !value.empty() && value[0] == '-';
 
@@ -41,7 +41,7 @@ size_t getSize(logger::ILogger& logger, Context& context, const std::string& val
     return 64;
 }
 
-std::shared_ptr<asg::Type> getType(logger::ILogger& logger, Context& context, const std::string& value)
+std::shared_ptr<Type> getType(Context& context, const std::string& value)
 {
     const bool isNegative = !value.empty() && value[0] == '-';
 
@@ -64,47 +64,47 @@ std::shared_ptr<asg::Type> getType(logger::ILogger& logger, Context& context, co
 
     if (hasDecimal)
     {
-        if (hasF) return context.typeTable().get(Type::TypeId::FLOAT);
+        if (hasF) return context.typeTable().get(Type::TypeId::FLOAT)[0];
 
-        return context.typeTable().get(Type::TypeId::DOUBLE);
+        return context.typeTable().get(Type::TypeId::DOUBLE)[0];
     }
 
-    const size_t size = getSize(logger, context, value);
+    const size_t size = getSize(context, value);
 
     switch (size)
     {
         case 8:
-            if (isNegative) return context.typeTable().get(Type::TypeId::INTEGER8);
+            if (isNegative) return context.typeTable().get(Type::TypeId::INTEGER8)[0];
 
-            return context.typeTable().get(Type::TypeId::UINTEGER8);
+            return context.typeTable().get(Type::TypeId::UINTEGER8)[0];
 
         case 16:
-            if (isNegative) return context.typeTable().get(Type::TypeId::INTEGER16);
+            if (isNegative) return context.typeTable().get(Type::TypeId::INTEGER16)[0];
 
-            return context.typeTable().get(Type::TypeId::UINTEGER16);
+            return context.typeTable().get(Type::TypeId::UINTEGER16)[0];
 
         case 32:
-            if (isNegative) return context.typeTable().get(Type::TypeId::INTEGER32);
+            if (isNegative) return context.typeTable().get(Type::TypeId::INTEGER32)[0];
 
-            return context.typeTable().get(Type::TypeId::UINTEGER32);
+            return context.typeTable().get(Type::TypeId::UINTEGER32)[0];
 
         case 64:
-            if (isNegative) return context.typeTable().get(Type::TypeId::INTEGER64);
+            if (isNegative) return context.typeTable().get(Type::TypeId::INTEGER64)[0];
 
-            return context.typeTable().get(Type::TypeId::UINTEGER64);
+            return context.typeTable().get(Type::TypeId::UINTEGER64)[0];
 
         default:
             throw RuntimeException("");
     }
 }
 
-NumberType getValue(logger::ILogger& logger, Context& context, const std::string& value)
+NumberType getValue(Context& context, const std::string& value)
 {
-    std::shared_ptr<asg::Type> type = getType(logger, context, value);
+    std::shared_ptr<Type> type = getType(context, value);
 
     switch (type->typeId())
     {
-        case asg::Type::TypeId::INTEGER8:
+        case Type::TypeId::INTEGER8:
         {
             Integer8 integer8{};
             integer8.type = type;
@@ -114,7 +114,7 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return integer8;
         }
 
-        case asg::Type::TypeId::INTEGER16:
+        case Type::TypeId::INTEGER16:
         {
             Integer16 integer16{};
             integer16.type = type;
@@ -123,8 +123,8 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return integer16;
         }
 
-        case asg::Type::TypeId::INTEGER32:
-        case asg::Type::TypeId::INTEGER:
+        case Type::TypeId::INTEGER32:
+        case Type::TypeId::INTEGER:
         {
             Integer32 integer32{};
             integer32.type = type;
@@ -133,7 +133,7 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return integer32;
         }
 
-        case asg::Type::TypeId::INTEGER64:
+        case Type::TypeId::INTEGER64:
         {
             Integer64 integer64{};
             integer64.type = type;
@@ -142,7 +142,7 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return integer64;
         }
 
-        case asg::Type::TypeId::UINTEGER8:
+        case Type::TypeId::UINTEGER8:
         {
             UInteger8 uinteger8{};
             uinteger8.type = type;
@@ -152,7 +152,7 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return uinteger8;
         }
 
-        case asg::Type::TypeId::UINTEGER16:
+        case Type::TypeId::UINTEGER16:
         {
             UInteger16 uinteger16{};
             uinteger16.type = type;
@@ -161,8 +161,8 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return uinteger16;
         }
 
-        case asg::Type::TypeId::UINTEGER32:
-        case asg::Type::TypeId::UINTEGER:
+        case Type::TypeId::UINTEGER32:
+        case Type::TypeId::UINTEGER:
         {
             UInteger32 uinteger32{};
             uinteger32.type = type;
@@ -171,7 +171,7 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return uinteger32;
         }
 
-        case asg::Type::TypeId::UINTEGER64:
+        case Type::TypeId::UINTEGER64:
         {
             UInteger64 uinteger64{};
             uinteger64.type = type;
@@ -180,7 +180,7 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return uinteger64;
         }
 
-        case asg::Type::TypeId::FLOAT:
+        case Type::TypeId::FLOAT:
         {
             Float floatValue{};
             floatValue.type = type;
@@ -189,7 +189,7 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
             return floatValue;
         }
 
-        case asg::Type::TypeId::DOUBLE:
+        case Type::TypeId::DOUBLE:
         {
             Double doubleValue{};
             doubleValue.type = type;
@@ -205,16 +205,16 @@ NumberType getValue(logger::ILogger& logger, Context& context, const std::string
 
 }
 
-asg::Number process(logger::ILogger& logger, Context& context, const ast::NumberNode& node)
+asg::Number process(Context& context, const ast::NumberNode& node)
 {
-    LOG_DEBUG((&logger), "Analyzing %s", typeid(node).name())
+    LOG_DEBUG((&context.logger()), "Analyzing %s", typeid(node).name())
 
     Scope& scope = context.scope();
 
     Number number{};
 
-    number.type = getType(logger, context, node.value);
-    number.value = getValue(logger, context, node.value);
+//    number.type = getType(context, node.value);
+    number.value = getValue(context, node.value);
 
     return number;
 }

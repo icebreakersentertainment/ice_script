@@ -6,13 +6,13 @@ namespace ice_script { namespace generator { namespace llvm { namespace detail {
 
 using namespace ice_script::asg;
 
-::llvm::Value* process(logger::ILogger& logger, Context& context, Llvm& llvm, const asg::Condition& condition)
+::llvm::Value* process(Context& context, Llvm& llvm, const asg::Condition& condition)
 {
-    LOG_DEBUG((&logger), "Processing %s", typeid(condition).name())
+    LOG_DEBUG((&context.logger()), "Processing %s", typeid(condition).name())
 
     Scope& scope = context.scope();
 
-    return process(logger, context, llvm, condition.expression.get());
+    return process(context, llvm, condition.expression.get());
 }
 
 }}}}

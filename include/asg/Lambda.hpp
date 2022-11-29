@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 #include "asg/Typemodifier.hpp"
 #include "asg/Identifier.hpp"
 #include "asg/Statblock.hpp"

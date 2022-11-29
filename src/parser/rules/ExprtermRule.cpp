@@ -26,7 +26,7 @@ static ExprpostopRuleType _exprpostopRule = exprpostopRule.alias();
 ExprtermRuleType exprtermRule = qi::eps >> (
             as<ast::OptionalTypeAndInitListType>()[(-(typeRule.alias() >> lit("=")) >> initlistRule.alias())]
             |
-            as<ast::VectorExprpreopExprvalueVectorExprpreopType>()[(*_exprpreopRule >> exprvalueRule.alias() >> *_exprpostopRule)]
+            as<ast::ExprpreopsExprvalueExprpostops>()[(*_exprpreopRule >> exprvalueRule.alias() >> *_exprpostopRule)]
         );
 
 }}}

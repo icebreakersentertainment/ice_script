@@ -3,14 +3,14 @@
 
 #include <string>
 
+#include "ast/ComparisonOperator.hpp"
 
 namespace ice_script { namespace asg {
 
 // COMPOP        ::= '==' | '!=' | '<' | '<=' | '>' | '>=' | 'is' | '!is'
-
 struct Comparisonoperator
 {
-    std::string value;
+    ast::ComparisonOperator comparisonOperator;
 };
 
 }}

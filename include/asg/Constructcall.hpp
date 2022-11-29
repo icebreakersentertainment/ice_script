@@ -3,16 +3,20 @@
 
 #include <string>
 
-#include "asg/Type.hpp"
+#include "symbol/FunctionSymbol.hpp"
+
 #include "asg/Arglist.hpp"
+#include "asg/LocationInfo.hpp"
 
 namespace ice_script { namespace asg {
 
 // CONSTRUCTCALL ::= TYPE ARGLIST
 
-struct Constructcall
+struct Constructcall : LocationInfo
 {
-    std::string value;
+    std::shared_ptr<FunctionSymbol> symbol;
+    boost::recursive_wrapper<Arglist> arglist;
+//    std::vector<Argument> arguments;
 };
 
 }}

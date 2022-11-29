@@ -1,0 +1,85 @@
+@startuml
+'scale 200 width
+'scale 500 height
+'left to right direction
+
+set namespaceSeparator ::
+
+' class TypeUtilities
+' {
+'     + std::vector<std::shared_ptr<OperatorType>> findImplicitConversionOperator(const std::vector<std::shared_ptr<OperatorType>>& operators, const std::shared_ptr<Type>& from, const std::shared_ptr<Type>& to)
+' }
+
+' class OperatorTypeUtilities
+' {
+'     + std::vector<std::shared_ptr<OperatorType>> findByOperatorTypeId(const std::vector<std::shared_ptr<OperatorType>>& operators, const OperatorTypeId operatorTypeId)
+'     + std::vector<std::shared_ptr<OperatorType>> findByParameters(const std::vector<std::shared_ptr<OperatorType>>& operators, const std::vector<std::shared_ptr<Type>>& parameters)
+'     + std::vector<std::shared_ptr<OperatorType>> findByReturnType(const std::vector<std::shared_ptr<OperatorType>>& operators, const std::shared_ptr<Type>& returnType)
+' }
+
+class Type
+{
+    + TypeId typeId() const
+    + const std::string& name() const
+    + void setName(std::string name)
+    + virtual bool primitive() const
+    + const Operators& operators() const
+}
+
+class InterfaceType extends Type
+
+class ClassType extends Type
+{
+    + const std::shared_ptr<ClassType>& extends() const
+    + const Interfaces& implements() const
+    + const Types& memberVariables() const
+    + const Functions& methods() const
+}
+
+class PrimitiveType extends Type
+class ArrayType extends Type
+class FunctionType extends Type
+class OperatorType extends FunctionType
+class LambdaType extends Type
+class VoidType extends Type
+class NullType extends Type
+class UnknownType extends Type
+
+class TypeTable
+{
+    + Types find(const std::string& name) const;
+    + Classes findClass(const std::string& name) const;
+    + Functions findFunction(const std::string& name) const;
+    + Operators findOperators(const OperatorTypeId operatorTypeId) const;
+
+    + std::shared_ptr<Type> findByKey(const std::string& key) const;
+    + std::shared_ptr<ClassType> findClassByKey(const std::string& key) const;
+    + std::shared_ptr<FunctionType> findFunctionByKey(const std::string& key) const;
+    ' + std::vector<std::shared_ptr<OperatorType>> findOperatorsByKey(const OperatorTypeId operatorTypeId);
+
+    + std::shared_ptr<Type> find(const std::shared_ptr<Type>& type, const uint32_t qualifierFlags, const TypeModifier modifierFlag = TypeModifier::VALUE) const
+    + std::shared_ptr<ClassType> find(const std::shared_ptr<ClassType>& type, const uint32_t qualifierFlags, const TypeModifier modifierFlag = TypeModifier::VALUE) const
+
+    + const Types& get(const std::string& name) const;
+    + const Types& get(const Type::TypeId typeId) const;
+    + const std::shared_ptr<Type>& get(const ast::PrimitiveType primitiveType) const;
+    + const std::shared_ptr<ClassType>& getClass(const std::string& name) const;
+    + const std::shared_ptr<FunctionType>& getFunction(const std::string& name) const;
+
+    + const std::shared_ptr<Type>& getByKey(const std::string& key) const;
+    + const std::shared_ptr<ClassType>& getClassByKey(const std::string& key) const;
+    + const std::shared_ptr<FunctionType>& getFunctionByKey(const std::string& key) const;
+
+    + const Types getAll() const;
+    + const Classes getAllClasses() const;
+    + const Functions getAllFunctions() const;
+
+    + void add(std::shared_ptr<Type> type);
+    + void add(std::shared_ptr<ClassType> type);
+    + void add(std::shared_ptr<FunctionType> type);
+    + void add(std::shared_ptr<OperatorType> type);
+
+    + const std::shared_ptr<UnknownType>& unknownType()
+}
+
+@enduml

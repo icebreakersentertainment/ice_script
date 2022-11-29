@@ -14,8 +14,11 @@ using ascii::char_;
 using ascii::space;
 using ascii::space_type;
 
-IdentifierRuleType
-    // IDENTIFIER    ::= single token:  starts with letter or _, can include any letter and digit, same as in C++
-    identifierRule = qi::eps >> lexeme[(char_("_") | char_("a-zA-z")) >> *(char_("_") | char_("a-zA-Z0-9"))];
+using ReservedKeywordRuleType = boost::spirit::qi::rule<PositionIteratorType, std::string(), SkipperType>;
+
+ReservedKeywordRuleType reservedKeywordRule = lit("return");
+
+// IDENTIFIER    ::= single token:  starts with letter or _, can include any letter and digit, same as in C++
+IdentifierRuleType identifierRule = qi::eps >> !reservedKeywordRule >> lexeme[(char_("_") | char_("a-zA-z")) >> *(char_("_") | char_("a-zA-Z0-9"))];
 
 }}}

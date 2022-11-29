@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_DOWHILEVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_DOWHILEVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/StatementGenerator.hpp"
+#include "generator/llvm/detail/generators/AssignGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        DowhileVisitorResultType operator()(const asg::Statement& statement);
-    DowhileVisitorResultType operator()(const asg::Assign& assign);
+    DowhileVisitorResultType operator()(const asg::Statement& statement)
+    {
+        return process(*context_, *llvm_, statement);
+    }
+
+    DowhileVisitorResultType operator()(const asg::Assign& assign)
+    {
+        return process(*context_, *llvm_, assign);
+    }
+
 };
 
 }}}}

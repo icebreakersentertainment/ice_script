@@ -3,23 +3,7 @@
 #include "parser/rules/IdentifierRule.hpp"
 #include "parser/rules/AssignRule.hpp"
 #include "parser/rules/ArglistRule.hpp"
-
-namespace ice_script { namespace ast {
-
-using FunccallOrIdentifierType = boost::variant<boost::recursive_wrapper<FunccallNode>, boost::recursive_wrapper<IdentifierNode>>;
-
-using OptionalIdentifierAssignVectorTupleOptionalIdentifierAssignType = boost::tuple<
-        boost::optional<boost::recursive_wrapper<IdentifierNode>>,
-        boost::recursive_wrapper<AssignNode>,
-        std::vector<
-                boost::tuple<
-                        boost::optional<boost::recursive_wrapper<IdentifierNode>>,
-                        boost::recursive_wrapper<AssignNode>
-                >
-        >
->;
-
-}}
+#include "parser/rules/PostfixOperatorRule.hpp"
 
 namespace ice_script { namespace parser { namespace rules {
 
@@ -37,14 +21,13 @@ using ascii::space_type;
 
 static IdentifierRuleType _identifierRule = identifierRule.alias();
 
-ExprpostopRuleType
-        // EXPRPOSTOP    ::= ('.' (FUNCCALL | IDENTIFIER)) | ('[' [IDENTIFIER ':'] ASSIGN {',' [IDENTIFIER ':' ASSIGN} ']') | ARGLIST | '++' | '--'
-        exprpostopRule = qi::eps >> (
+// EXPRPOSTOP    ::= ('.' (FUNCCALL | IDENTIFIER)) | ('[' [IDENTIFIER ':'] ASSIGN {',' [IDENTIFIER ':' ASSIGN} ']') | ARGLIST | '++' | '--'
+ExprpostopRuleType exprpostopRule = qi::eps >> (
                 as<ast::FunccallOrIdentifierType>()[(lit(".") >> (funccallRule.alias() | _identifierRule))]
-                | as<ast::OptionalIdentifierAssignVectorTupleOptionalIdentifierAssignType>()[(lit("[") >> -(_identifierRule >> lit(":")) >> assignRule.alias() >> *(lit(",") >> -(_identifierRule >> lit(":")) >> assignRule.alias()) >> lit("]"))]
+                // | as<ast::OptionalIdentifierAssignVectorTupleOptionalIdentifierAssignType>()[(lit("[") >> -(_identifierRule >> lit(":")) >> assignRule.alias() >> *(lit(",") >> -(_identifierRule >> lit(":")) >> assignRule.alias()) >> lit("]"))]
+                | (lit("[") >> assignRule.alias() >> lit("]"))
                 | arglistRule.alias()
-                | string("++")
-                | string("--")
+                | postfixOperatorRule
         );
 
 }}}

@@ -14,14 +14,9 @@
 #include "handles/Handle.hpp"
 #include "handles/PointerHandle.hpp"
 #include "utilities/Properties.hpp"
+#include "detail/InsertionOperatorUtils.hpp"
 #include "fs/IFileSystem.hpp"
 #include "logger/ILogger.hpp"
-
-#define COMMA ,
-#define PRINT_HEADER_TO_STREAM(class) << "(" << boost::typeindex::type_id<class>().pretty_name() << ")["
-#define PRINT_TO_STREAM(data, name) << #name ": " << data.name
-#define PRINT_DELIMITER() << ", "
-#define PRINT_FOOTER_TO_STREAM() << "]"
 
 // glm
 namespace glm

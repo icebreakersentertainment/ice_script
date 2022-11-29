@@ -15,13 +15,20 @@
 namespace ice_script { namespace ast {
 
 struct ConditionNode;
+struct AssignNode;
 struct AssignopNode;
+
+struct AssignopAssignNode
+{
+    boost::recursive_wrapper<AssignopNode> assignopNode;
+    boost::recursive_wrapper<AssignNode> assignNode;
+};
 
 struct AssignNode : LocationInfo
 {
     // assignRule = qi::eps >> conditionRule >> -(assignopRule >> assignRule);
     boost::recursive_wrapper<ConditionNode> conditionNode;
-    boost::optional<boost::tuple<boost::recursive_wrapper<AssignopNode>, boost::recursive_wrapper<AssignNode>>> assignopNodeAssignNode;
+    boost::optional<AssignopAssignNode> assignopAssignNode;
 //    std::string value;
 };
 
@@ -31,10 +38,15 @@ struct AssignNode : LocationInfo
 #include "ast/AssignopNode.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
+        ice_script::ast::AssignopAssignNode,
+        assignopNode,
+        assignNode
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
         ice_script::ast::AssignNode,
         conditionNode,
-        assignopNodeAssignNode
-//        value
+        assignopAssignNode
 )
 
 #endif //ICE_SCRIPT_ASSIGNNODE_HPP

@@ -36,6 +36,6 @@ static ExprRuleType _exprRule = exprRule.alias();
 //            )]
 //            >> lit(")");
 
-ParamlistRuleType paramlistRule = qi::eps >> lit("(") >> -((_typeRule >> _typemodRule >> -_identifierRule >> -(lit("=") >> _exprRule)) % ',') >> lit(")");
+ParamlistRuleType paramlistRule = qi::eps >> lit("(") >> -((_typeRule /*>> _typemodRule*/ >> -_identifierRule >> -(lit("=") >> _exprRule)) % ',') >> lit(")");
 
 }}}

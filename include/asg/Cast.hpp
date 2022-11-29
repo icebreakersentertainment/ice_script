@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 #include "asg/Assign.hpp"
 
 namespace ice_script { namespace asg {

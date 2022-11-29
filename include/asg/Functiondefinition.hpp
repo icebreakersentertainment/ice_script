@@ -3,15 +3,16 @@
 
 #include <string>
 
-#include "asg/Type.hpp"
+#include "type/Type.hpp"
 #include "asg/Identifier.hpp"
 #include "asg/Parameterlist.hpp"
+#include "asg/LocationInfo.hpp"
 
 namespace ice_script { namespace asg {
 
 // FUNCDEF       ::= {'external' | 'shared'} 'funcdef' TYPE ['&'] IDENTIFIER PARAMLIST ';'
 
-struct Functiondefinition
+struct Functiondefinition : LocationInfo
 {
     std::string value;
 };

@@ -5,13 +5,13 @@
 
 #include "asg/Logicoperator.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Logicoperator process(logger::ILogger& logger, Context& context, const ast::LogicopNode& node);
+asg::Logicoperator process(Context& context, const ast::LogicopNode& node);
 
 }}}
 

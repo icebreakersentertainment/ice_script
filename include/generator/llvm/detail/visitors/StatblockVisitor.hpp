@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_STATBLOCKVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_STATBLOCKVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/VariableGenerator.hpp"
+#include "generator/llvm/detail/generators/StatementGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        StatblockVisitorResultType operator()(const asg::Variable& variable);
-    StatblockVisitorResultType operator()(const asg::Statement& statement);
+    StatblockVisitorResultType operator()(const asg::Variable& variable)
+    {
+        return process(*context_, *llvm_, variable);
+    }
+
+    StatblockVisitorResultType operator()(const asg::Statement& statement)
+    {
+        return process(*context_, *llvm_, statement);
+    }
+
 };
 
 }}}}

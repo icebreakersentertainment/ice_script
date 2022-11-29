@@ -1,11 +1,12 @@
 #ifndef ICE_SCRIPT_GENERATOR_VARIABLEACCESSVISITOR_HPP
 #define ICE_SCRIPT_GENERATOR_VARIABLEACCESSVISITOR_HPP
 
-#include <string>
-
 #include "asg/Asg.hpp"
 
 #include "generator/llvm/detail/visitors/AbstractVisitor.hpp"
+
+#include "generator/llvm/detail/generators/ScoperatoreGenerator.hpp"
+#include "generator/llvm/detail/generators/IdentifierGenerator.hpp"
 
 #include "logger/ILogger.hpp"
 
@@ -22,8 +23,16 @@ public:
 
     using AbstractVisitor::operator();
 
-        VariableaccessVisitorResultType operator()(const asg::Scoperatore& scoperatore);
-    VariableaccessVisitorResultType operator()(const asg::Identifier& identifier);
+    VariableaccessVisitorResultType operator()(const asg::Scoperatore& scoperatore)
+    {
+        return process(*context_, *llvm_, scoperatore);
+    }
+
+    VariableaccessVisitorResultType operator()(const asg::Identifier& identifier)
+    {
+        return process(*context_, *llvm_, identifier);
+    }
+
 };
 
 }}}}

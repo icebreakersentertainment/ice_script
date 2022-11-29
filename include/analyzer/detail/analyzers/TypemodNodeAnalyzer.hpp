@@ -5,13 +5,13 @@
 
 #include "asg/Typemodifier.hpp"
 
-#include "analyzer/Context.hpp"
+#include "analyzer/detail/Context.hpp"
 
 #include "logger/ILogger.hpp"
 
 namespace ice_script { namespace analyzer { namespace detail {
 
-asg::Typemodifier process(logger::ILogger& logger, Context& context, const ast::TypemodNode& node);
+asg::Typemodifier process(Context& context, const ast::TypemodNode& node);
 
 }}}
 
