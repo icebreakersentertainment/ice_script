@@ -11,8 +11,8 @@ stack: python 3.9
 environment:
   matrix:
 #     - APPVEYOR_BUILD_WORKER_IMAGE: macOS
-    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
-    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2204
       CC: clang
       CXX: clang++
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
@@ -21,7 +21,7 @@ environment:
 
 install:
   - pip install conan
-#   - sh: if [ "${APPVEYOR_BUILD_WORKER_IMAGE}" == "Ubuntu2004" ]; then sudo apt install -y libgl-dev libglu1-mesa-dev; fi
+#   - sh: if [ "${APPVEYOR_BUILD_WORKER_IMAGE}" == "Ubuntu2204" ]; then sudo apt install -y libgl-dev libglu1-mesa-dev; fi
 
 build_script:
   - sh: cd ${APPVEYOR_BUILD_FOLDER}
@@ -32,7 +32,7 @@ build_script:
   - sh: if [ "${APPVEYOR_BUILD_WORKER_IMAGE}" == "Ubuntu2004" ]; then conan profile update settings.compiler.libcxx=libstdc++11 default; fi
   - conan config set general.revisions_enabled=1
   - conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
-  - conan export ../conan/llvm-core llvm-core/13.0.0@icebreakersentertainment/stable
+  - conan remote add icebreakersentertainment https://artifactory.icebreakersentertainment.com/artifactory/api/conan/icebreakersentertainment
   - conan install .. --build missing
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="conan_paths.cmake" -DICSCRIPT_BUILD_BENCHMARKS=1 -DICSCRIPT_BUILD_TESTS=1 -DICSCRIPT_BUILD_AS_LIBRARY=1 ..
   - sh: make
