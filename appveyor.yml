@@ -11,7 +11,7 @@ stack: python 3.9
 environment:
   matrix:
 #     - APPVEYOR_BUILD_WORKER_IMAGE: macOS
-    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu2004
       CC: clang
       CXX: clang++
