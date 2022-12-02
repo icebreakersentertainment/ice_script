@@ -36,7 +36,8 @@ build_script:
   - conan config set general.revisions_enabled=1
   - conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
   - conan remote add icebreakersentertainment https://artifactory.icebreakersentertainment.com/artifactory/api/conan/icebreakersentertainment --insert
-  - conan install .. --build=missing
+#   - conan install .. --build=missing
+  - conan install ..
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="conan_paths.cmake" -DICESCRIPT_BUILD_BENCHMARKS=1 -DICESCRIPT_BUILD_TESTS=1 -DICESCRIPT_BUILD_AS_LIBRARY=1 ..
   - sh: make
   - cmd: msbuild /p:Configuration=Release ice_script.sln
