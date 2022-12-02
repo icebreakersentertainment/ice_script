@@ -35,8 +35,8 @@ build_script:
   - sh: if [ "${APPVEYOR_BUILD_WORKER_IMAGE}" == "Ubuntu2004" ]; then conan profile update settings.compiler.libcxx=libstdc++11 default; fi
   - conan config set general.revisions_enabled=1
   - conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
-  - conan remote add icebreakersentertainment https://artifactory.icebreakersentertainment.com/artifactory/api/conan/bincrafters_proxy --insert
-  - conan remote add icebreakersentertainment https://artifactory.icebreakersentertainment.com/artifactory/api/conan/center.conan.io_proxy --insert
+  - conan remote add bincrafters_proxy https://artifactory.icebreakersentertainment.com/artifactory/api/conan/bincrafters_proxy --insert
+  - conan remote add center.conan.io_proxy https://artifactory.icebreakersentertainment.com/artifactory/api/conan/center.conan.io_proxy --insert
   - conan remote add icebreakersentertainment https://artifactory.icebreakersentertainment.com/artifactory/api/conan/icebreakersentertainment --insert
 #   - conan install .. --build=missing
   - conan install ..
