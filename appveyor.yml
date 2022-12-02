@@ -23,8 +23,10 @@ install:
   - pip install conan
 
 build_script:
-  - sh: sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14  20
-  - sh: sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14  20
+    - sh: sudo ln -s /usr/bin/clang++-14 /usr/bin/clang++
+    - sh: sudo ln -s /usr/bin/clang-14 /usr/bin/clang
+#   - sh: sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14  20
+#   - sh: sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14  20
   - sh: cd ${APPVEYOR_BUILD_FOLDER}
   - cmd: cd %APPVEYOR_BUILD_FOLDER%
   - mkdir build
