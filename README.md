@@ -1,9 +1,8 @@
 Ice Script
 --------
 
-[![Build Status](https://travis-ci.com/icebreakersentertainment/ice_script.svg?branch=master)](https://travis-ci.com/icebreakersentertainment/ice_script)
-[![Build status](https://ci.appveyor.com/api/projects/status/2tqewfhy60mxv429/branch/master?svg=true)](https://ci.appveyor.com/project/icebreakersentertainment/ice-engine/branch/master)
-[![Documentation Status](https://readthedocs.org/projects/ice-engine/badge/?version=latest)](http://ice-engine.readthedocs.io/en/latest/?badge=latest)
+[![Build status](https://ci.appveyor.com/api/projects/status/r82l3k6hokfp4iar/branch/master?svg=true)](https://ci.appveyor.com/project/icebreakersentertainment/ice-script/branch/master)
+<!-- [![Documentation Status](https://readthedocs.org/projects/ice-script/badge/?version=latest)](http://ice-script.readthedocs.io/en/latest/?badge=latest) -->
 
 **Note**: This project is incredibly young, and isn't in any kind of production ready state.
 
