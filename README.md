@@ -6,8 +6,6 @@ Ice Script
 
 **Note**: This project is incredibly young, and isn't in any kind of production ready state.
 
-<!-- Documentation is available at [http://ice-engine.readthedocs.io/en/latest/](http://ice-engine.readthedocs.io/en/latest/). -->
-
 To clone:
 
     git clone https://github.com/icebreakersentertainment/ice_script.git
